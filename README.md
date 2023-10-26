@@ -30,7 +30,10 @@ Run the following command in Terminal to clone this github repository:
  ```
  git clone https://github.com/abdelfattah-lab/M4BRAM.git
  ```
-Then go to the "**M4BRAM**" repository in your terminal. 
+Then go to the "**M4BRAM**" repository in your terminal by running. 
+ ```
+ cd M4BRAM
+ ```
 
 
 ## 1. Running the "**scripts**" folder
