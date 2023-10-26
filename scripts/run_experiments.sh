@@ -22,4 +22,4 @@ cd ..
 cd no_dsp
 python3 run_no_dsp.py &&
 
-cd ..
+echo "Successfully run all experiments."
