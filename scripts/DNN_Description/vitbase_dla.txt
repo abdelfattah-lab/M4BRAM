@@ -1,0 +1,18 @@
+# The network layer definition is in the form of (r, s, c, p, q, k)
+# where
+# r = filter width
+# s = filter height
+# c = input  channel
+# p = output height
+# q = output width
+# k = output channel
+
+######### ViT-Base Definition ##########
+# q, k, v
+('conv', [1, 1, 768,  16,  16, 768])
+('conv', [1, 1, 768,  16,  16, 768])
+('conv', [1, 1, 768,  16,  16, 768])
+# A = q*k.T
+('conv', [1, 1, 768,  16,  16, 256])
+# Av
+('conv', [1, 1,  256,  16,  16, 768])

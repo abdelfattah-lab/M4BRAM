@@ -1,0 +1,43 @@
+No DSP Results
+
+M4BRAM_Config  Weight  Input   Network   Speedup   
+SY-M4L         8-bit   8-bit   alexnet   2.1       
+SY-M4L         8-bit   8-bit   resnet18  1.99      
+SY-M4L         8-bit   8-bit   resnet34  2.05      
+
+SY-M4L         8-bit   7-bit   alexnet   2.33      
+SY-M4L         8-bit   7-bit   resnet18  2.19      
+SY-M4L         8-bit   7-bit   resnet34  2.27      
+
+SY-M4L         8-bit   6-bit   alexnet   2.61      
+SY-M4L         8-bit   6-bit   resnet18  2.43      
+SY-M4L         8-bit   6-bit   resnet34  2.52      
+
+SY-M4L         8-bit   5-bit   alexnet   1.48      
+SY-M4L         8-bit   5-bit   resnet18  1.37      
+SY-M4L         8-bit   5-bit   resnet34  1.43      
+
+SY-M4L         8-bit   4-bit   alexnet   1.85      
+SY-M4L         8-bit   4-bit   resnet18  1.57      
+SY-M4L         8-bit   4-bit   resnet34  1.64      
+
+DP-M4L         8-bit   8-bit   alexnet   3.44      
+DP-M4L         8-bit   8-bit   resnet18  3.13      
+DP-M4L         8-bit   8-bit   resnet34  3.28      
+
+DP-M4L         8-bit   7-bit   alexnet   3.44      
+DP-M4L         8-bit   7-bit   resnet18  3.13      
+DP-M4L         8-bit   7-bit   resnet34  3.28      
+
+DP-M4L         8-bit   6-bit   alexnet   4.09      
+DP-M4L         8-bit   6-bit   resnet18  3.65      
+DP-M4L         8-bit   6-bit   resnet34  3.85      
+
+DP-M4L         8-bit   5-bit   alexnet   2.04      
+DP-M4L         8-bit   5-bit   resnet18  1.83      
+DP-M4L         8-bit   5-bit   resnet34  1.92      
+
+DP-M4L         8-bit   4-bit   alexnet   2.7       
+DP-M4L         8-bit   4-bit   resnet18  2.2       
+DP-M4L         8-bit   4-bit   resnet34  2.33      
+

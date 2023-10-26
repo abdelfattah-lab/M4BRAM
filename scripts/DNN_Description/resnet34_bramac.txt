@@ -1,0 +1,68 @@
+# The network layer definition is in the form of (r, s, c, p, q, k)
+# where
+# r = filter width
+# s = filter height
+# c = input  channel
+# p = output height
+# q = output width
+# k = output channel
+
+######### ResNet34 Definition ##########
+('conv', [3, 1, 49, 112, 112, 64]) 
+
+# ResnetBlock(64)
+('conv', [3, 3, 64, 56, 56, 64])
+('conv', [3, 3, 64, 56, 56, 64])
+# ResnetBlock(64)
+('conv', [3, 3, 64, 56, 56, 64])
+('conv', [3, 3, 64, 56, 56, 64])
+# ResnetBlock(64)
+('conv', [3, 3, 64, 56, 56, 64])
+('conv', [3, 3, 64, 56, 56, 64])
+
+# ResnetBlock(128)
+('conv', [3, 3, 64,  28, 28, 128])
+('conv', [3, 3, 128, 28, 28, 128])
+('conv', [3, 1, 64,  28, 28, 43]) # 1x1 conv
+# ResnetBlock(128)
+('conv', [3, 3, 128, 28, 28, 128])
+('conv', [3, 3, 128, 28, 28, 128])
+# ResnetBlock(128)
+('conv', [3, 3, 128, 28, 28, 128])
+('conv', [3, 3, 128, 28, 28, 128])
+# ResnetBlock(128)
+('conv', [3, 3, 128, 28, 28, 128])
+('conv', [3, 3, 128, 28, 28, 128])
+
+# ResnetBlock(256)
+('conv', [3, 3, 128, 14, 14, 256])
+('conv', [3, 3, 256, 14, 14, 256])
+('conv', [3, 1, 128, 14, 14, 86]) # 1x1 conv
+# ResnetBlock(256)
+('conv', [3, 3, 256, 14, 14, 256])
+('conv', [3, 3, 256, 14, 14, 256])
+# ResnetBlock(256)
+('conv', [3, 3, 256, 14, 14, 256])
+('conv', [3, 3, 256, 14, 14, 256])
+# ResnetBlock(256)
+('conv', [3, 3, 256, 14, 14, 256])
+('conv', [3, 3, 256, 14, 14, 256])
+# ResnetBlock(256)
+('conv', [3, 3, 256, 14, 14, 256])
+('conv', [3, 3, 256, 14, 14, 256])
+# ResnetBlock(256)
+('conv', [3, 3, 256, 14, 14, 256])
+('conv', [3, 3, 256, 14, 14, 256])            
+
+# ResnetBlock(512)
+('conv', [3, 3, 256, 7,  7,  512])
+('conv', [3, 3, 512, 7,  7,  512])
+('conv', [3, 1, 256, 7,  7,  171]) # 1x1 conv
+# ResnetBlock(512)
+('conv', [3, 3, 512, 7,  7,  512])
+('conv', [3, 3, 512, 7,  7,  512])        
+# ResnetBlock(512)
+('conv', [3, 3, 512, 7,  7,  512])
+('conv', [3, 3, 512, 7,  7,  512])
+
+('fc', [1000, 512])

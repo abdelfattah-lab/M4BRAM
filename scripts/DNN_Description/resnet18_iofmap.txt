@@ -1,0 +1,18 @@
+# The input and output fmap definition is in the form of (p_in, q_in, c, p_out, q_out, k)
+# where
+# p_in  = input feature height
+# q_in  = input feature width
+# c     = input channel
+# p_out = output feature height
+# p_out = output feature width
+# k     = output channel
+
+######### ResNet18 Definition ##########
+
+[56,  56,  64,  56, 56, 64]
+[56,  56,  64,  28, 28, 128]
+[28,  28,  128, 28, 28, 128]
+[28,  28,  128, 14, 14, 256]
+[14,  14,  256, 14, 14, 256]
+[14,  14,  256, 7,  7,  512]
+[7,   7,   512, 7,  7,  512]

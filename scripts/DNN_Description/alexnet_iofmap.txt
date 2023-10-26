@@ -1,0 +1,17 @@
+# The input and output fmap definition is in the form of (p_in, q_in, c, p_out, q_out, k)
+# where
+# p_in  = input feature height
+# q_in  = input feature width
+# c     = input channel
+# p_out = output feature height
+# p_out = output feature width
+# k     = output channel
+
+######### AlexNet Definition ##########
+[227, 227, 3, 55, 55, 96]
+[55, 55, 96, 27, 27, 96]
+[27, 27, 96, 27, 27, 256]
+[27, 27, 256, 13, 13, 256]
+[13, 13, 256, 13, 13, 384]
+[13, 13, 384, 13, 13, 384]
+[13, 13, 384, 13, 13, 256]

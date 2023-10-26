@@ -1,0 +1,63 @@
+Mixed Activation Results
+
+Network   M4BRAM_Config  Weight  Input   Speedup   
+vgg16     DP-M4S         8-bit   8-bit   1.61      
+vgg16     SY-M4L         8-bit   8-bit   1.8       
+vgg16     DP-M4L         8-bit   8-bit   2.24      
+
+vgg16     DP-M4S         8-bit   7-bit   1.61      
+vgg16     SY-M4L         8-bit   7-bit   1.99      
+vgg16     DP-M4L         8-bit   7-bit   2.24      
+
+vgg16     DP-M4S         8-bit   6-bit   1.86      
+vgg16     SY-M4L         8-bit   6-bit   2.22      
+vgg16     DP-M4L         8-bit   6-bit   2.31      
+
+vgg16     DP-M4S         8-bit   5-bit   1.32      
+vgg16     SY-M4L         8-bit   5-bit   1.52      
+vgg16     DP-M4L         8-bit   5-bit   1.7       
+
+vgg16     DP-M4S         8-bit   4-bit   1.57      
+vgg16     SY-M4L         8-bit   4-bit   1.52      
+vgg16     DP-M4L         8-bit   4-bit   2.06      
+
+resnet18  DP-M4S         8-bit   8-bit   1.62      
+resnet18  SY-M4L         8-bit   8-bit   1.96      
+resnet18  DP-M4L         8-bit   8-bit   2.29      
+
+resnet18  DP-M4S         8-bit   7-bit   1.62      
+resnet18  SY-M4L         8-bit   7-bit   2.11      
+resnet18  DP-M4L         8-bit   7-bit   2.29      
+
+resnet18  DP-M4S         8-bit   6-bit   1.93      
+resnet18  SY-M4L         8-bit   6-bit   2.25      
+resnet18  DP-M4L         8-bit   6-bit   2.29      
+
+resnet18  DP-M4S         8-bit   5-bit   1.27      
+resnet18  SY-M4L         8-bit   5-bit   1.38      
+resnet18  DP-M4L         8-bit   5-bit   1.7       
+
+resnet18  DP-M4S         8-bit   4-bit   1.46      
+resnet18  SY-M4L         8-bit   4-bit   1.52      
+resnet18  DP-M4L         8-bit   4-bit   2.04      
+
+resnet34  DP-M4S         8-bit   8-bit   1.64      
+resnet34  SY-M4L         8-bit   8-bit   2.03      
+resnet34  DP-M4L         8-bit   8-bit   2.34      
+
+resnet34  DP-M4S         8-bit   7-bit   1.64      
+resnet34  SY-M4L         8-bit   7-bit   2.2       
+resnet34  DP-M4L         8-bit   7-bit   2.34      
+
+resnet34  DP-M4S         8-bit   6-bit   1.96      
+resnet34  SY-M4L         8-bit   6-bit   2.32      
+resnet34  DP-M4L         8-bit   6-bit   2.34      
+
+resnet34  DP-M4S         8-bit   5-bit   1.27      
+resnet34  SY-M4L         8-bit   5-bit   1.44      
+resnet34  DP-M4L         8-bit   5-bit   1.77      
+
+resnet34  DP-M4S         8-bit   4-bit   1.5       
+resnet34  SY-M4L         8-bit   4-bit   1.71      
+resnet34  DP-M4L         8-bit   4-bit   2.14      
+

@@ -1,0 +1,30 @@
+# The network layer definition is in the form of (r, s, c, p, q, k)
+# where
+# r = filter width
+# s = filter height
+# c = input  channel
+# p = output height
+# q = output width
+# k = output channel
+
+######### VGG16 Definition ##########
+('conv', [3, 1,  49, 224, 224,  64])            
+('conv', [3, 3,  64, 224, 224,  64])
+
+('conv', [3, 3,  64, 112, 112, 128])
+('conv', [3, 3, 128, 112, 112, 128])
+('conv', [3, 3, 128,  56,  56, 256])
+('conv', [3, 3, 256,  56,  56, 256])
+('conv', [3, 3, 256,  56,  56, 256])
+
+('conv', [3, 3, 256,  28,  28, 512])
+('conv', [3, 3, 512,  28,  28, 512])
+('conv', [3, 3, 512,  28,  28, 512])
+
+('conv', [3, 3, 512,  14,  14, 512])
+('conv', [3, 3, 512,  14,  14, 512])
+('conv', [3, 3, 512,  14,  14, 512])
+
+('fc', [25088, 4096])
+('fc', [4096,  4096])
+('fc', [4096,  1000])

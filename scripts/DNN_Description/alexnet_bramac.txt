@@ -1,0 +1,18 @@
+# The network layer definition is in the form of (r, s, c, p, q, k)
+# where
+# r = filter width
+# s = filter height
+# c = input  channel
+# p = output height
+# q = output width
+# k = output channel
+
+######### AlexNet Definition ##########
+('conv', [3, 1, 128, 55, 55, 96]) 
+('conv', [5, 5, 96, 27, 27, 256])
+('conv', [3, 3, 256, 13, 13, 384])
+('conv', [3, 3, 384, 13, 13, 384])
+('conv', [3, 3, 384, 13, 13, 256])
+('fc', [4096, 4096])
+('fc', [4096, 4096])
+('fc', [4096, 1000])

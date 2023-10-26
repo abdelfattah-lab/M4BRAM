@@ -1,0 +1,23 @@
+# The input and output fmap definition is in the form of (p_in, q_in, c, p_out, q_out, k)
+# where
+# p_in  = input feature height
+# q_in  = input feature width
+# c     = input channel
+# p_out = output feature height
+# p_out = output feature width
+# k     = output channel
+
+######### VGG16 Definition ##########
+[224, 224,   3, 224, 224,  64]
+[224, 224,  64, 224, 224,  64]
+
+[112, 112,  64, 112, 112, 128]
+[112, 112, 128, 112, 112, 128]
+
+[ 56,  56, 128,  56,  56, 256]
+[ 56,  56, 256,  56,  56, 256]
+
+[ 28,  28, 256,  28,  28, 512]
+[ 28,  28, 512,  28,  28, 512]
+
+[ 14,  14, 512,  14,  14, 512]

@@ -1,0 +1,62 @@
+BRAMAC Results
+Network     BRAMAC_Config  Precision   Speedup   
+alexnet     BRAMAC-1DA     2-bit       1.45      
+alexnet     BRAMAC-1DA     4-bit       1.88      
+alexnet     BRAMAC-1DA     8-bit       1.75      
+
+resnet34    BRAMAC-1DA     2-bit       1.09      
+resnet34    BRAMAC-1DA     4-bit       1.33      
+resnet34    BRAMAC-1DA     8-bit       1.06      
+
+vitbase     BRAMAC-1DA     2-bit       1.2       
+vitbase     BRAMAC-1DA     4-bit       1.74      
+vitbase     BRAMAC-1DA     8-bit       1.73      
+
+
+
+Ablation Study with Maximum Duplication Factor = 1
+Network     M4BRAM_Config  Precision   Speedup   
+alexnet     DP-M4S         2-bit       1.43      
+alexnet     DP-M4S         4-bit       1.83      
+alexnet     DP-M4S         8-bit       1.85      
+
+resnet34    DP-M4S         2-bit       1.26      
+resnet34    DP-M4S         4-bit       1.29      
+resnet34    DP-M4S         8-bit       1.25      
+
+vitbase     DP-M4S         2-bit       1.29      
+vitbase     DP-M4S         4-bit       1.8       
+vitbase     DP-M4S         8-bit       1.86      
+
+
+
+Ablation Study with Maximum Duplication Factor = 2
+Network     M4BRAM_Config  Precision   Speedup   
+alexnet     DP-M4S         2-bit       1.84      
+alexnet     DP-M4S         4-bit       2.7       
+alexnet     DP-M4S         8-bit       1.85      
+
+resnet34    DP-M4S         2-bit       1.61      
+resnet34    DP-M4S         4-bit       1.82      
+resnet34    DP-M4S         8-bit       1.54      
+
+vitbase     DP-M4S         2-bit       1.86      
+vitbase     DP-M4S         4-bit       2.4       
+vitbase     DP-M4S         8-bit       1.92      
+
+
+
+Ablation Study with Maximum Duplication Factor = 4
+Network     M4BRAM_Config  Precision   Speedup   
+alexnet     DP-M4S         2-bit       2.72      
+alexnet     DP-M4S         4-bit       2.7       
+alexnet     DP-M4S         8-bit       2.31      
+
+resnet34    DP-M4S         2-bit       2.26      
+resnet34    DP-M4S         4-bit       2.43      
+resnet34    DP-M4S         8-bit       1.64      
+
+vitbase     DP-M4S         2-bit       2.48      
+vitbase     DP-M4S         4-bit       2.51      
+vitbase     DP-M4S         8-bit       1.92      
+
