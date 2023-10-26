@@ -12,9 +12,9 @@ The **COFFE** folder is a modified version of the COFFE simulator (https://githu
 
 ## Tested Environment & Dependencies
 OS requirement:
-- Any OS with python3 to run files in **scripts**
-- CentOS Linux 7 (or above) to run files in **COFFE**
-- Ubuntu 20.04.6 (or above) to run DNN quantization experiments
+- Any OS with python3 to run files in the **scripts** directory.
+- CentOS Linux 7 (or above) to run files in the **COFFE** directory.
+- Ubuntu 20.04.6 (or above) to run DNN quantization experiments.
 
 For running **scripts** and **COFFE**, the following software is required. 
 - Python 2.7
