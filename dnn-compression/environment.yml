@@ -1,0 +1,11 @@
+name: compression
+channels:
+  - defaults
+  - conda-forge
+  - pytorch
+dependencies:
+  - python=3.8
+  - pytorch
+  - torchvision
+  - transformers
+  - datasets
