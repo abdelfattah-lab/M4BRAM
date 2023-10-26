@@ -27,64 +27,46 @@ Run the following command in Terminal to clone this github repository:
  ```
  git clone https://github.com/abdelfattah-lab/M4BRAM.git
  ```
+Then go to the **M4BRAM** repository in your terminal. 
 
-There are 3 tasks required to collect the area, frequency, and performance of BRAMAC
-1. Run **COFFE-CIM** to obtain the area and delay of different components of BRAMAC. 
-2. Run scripts in **dlabramac** to obtain the speedup of employing BRAMAC to Intel DLA for AlexNet and ResNet-34.
-3. Run synopsys design compiler to obtain the area of the embedded finite-state machines in BRAMAC.
+## 1. Running the **scripts** folder
+Run the following commands after going to the **M4BRAM** repository in your terminal. 
+ ```
+ cd scripts
+ bash run_experiments.sh
+ ```
+It will take several minutes to finish. A new directory **results** under **scripts** will be created and contain experiment results in _.txt_ format. To view the results, go to the **results** directory. There are totally 4 _.txt_ files:
+- _Section_VD_mixed_activation_results.txt_: This file contains the results shown in **Fig. 9** of the M4BRAM paper. 
+- _Section_VD_mixed_weight_results.txt_: This file contains the results shown in **Table III** of the M4BRAM paper. 
+- _Section_VE_m4bram_vs_bramac_results.txt_: This file contains the results shown in **Fig. 10** of the M4BRAM paper. 
+- _Section_VE_m4bram_vs_bramac_ablation_results.txt_: This file contains the results shown in **Fig. 11** of the M4BRAM paper. 
+- _Section_VF_no_dsp_results.txt_: This file contains the results shown in **Fig. 12** of the M4BRAM paper. 
 
-## 1. Running COFFE-CIM
-Before running this experiment, please make sure that the following command:
+We also provide the scripts to reproduce the figures in the M4BRAM paper. Run the following command in your terminal. 
+ ```
+ bash plot_results.sh
+ ```
+Then 4 figures in _.svg_ format will be generated under the **results** directory. The 4 figures' names contain the corresponding figure numbers in the M4BRAM paper. 
+
+
+## 2. Running the **COFFE** simulator for M4BRAM
+Before running this experiment, please source the necessary bash files in your terminal to enable Synopsys HSpice. Make sure that the following command:
  ```
 hspice
 ```
-can be run successfully in the current terminal. If not, please set up the hspice environment in the terminal. 
+can be run successfully in the current terminal.
 
-COFFE-CIM can report the area and delay of all components in BRAMAC by running the following commands inside the BRAMAC repository:
+Run the following commands (assuming still in the **scripts** directory after running the first experiments):
  ```
- cd COFFE-CIM
- python2 coffe.py -i 6 input_files/CIM/RAM16_CIM.txt
- python2 coffe.py -i 6 input_files/CIM/RAM32_CIM.txt 
+ cd ../COFFE
+ python2 coffe.py -i 6 input_files/M4BRAM/M4BRAM_S_16k.txt
+ python2 coffe.py -i 6 input_files/M4BRAM/M4BRAM_L_16k.txt
  ```
-The two python2 commands evaluate BRAMAC based on 16Kb and 32Kb baseline BRAMs. Each of the two COFFE-CIM experiments takes roughly 12 hours to complete depending on the computer's performance. After completing, users can view the reported delay and area by running the following commands inside the BRAMAC repository:
+The two python2 commands evaluate M4BRAM-S and M4BRAM-L, respectively. Each of the two COFFE-CIM experiments takes roughly 12 hours to complete (depending on the computer's performance). After completing, users can view the reported delay and area by running the following commands inside the **COFFE** repository:
  ```
- cd COFFE-CIM/input_files/CIM/RAM16_CIM
+ cd input_files/M4BRAM/M4BRAM_S_16k
  open report.txt 
- cd COFFE-CIM/input_files/CIM/RAM32_CIM
+ cd input_files/M4BRAM/M4BRAM_L_16k
  open report.txt 
  ```
-The first **report.txt** file is for a 16Kb baseline BRAM, while the second **report.txt** file is for a 32Kb baseline BRAM. The dummy array area information is inside the **report.txt** file, under **DUMMY ARRAY AREA CONTRIBUTIONS**. Note that the reported dummy array area contains two dummy arrays. The user should divide the area number by 2 to obtain the area of one dummy array as in the paper. 
-To estimate the dummy array area of a 20Kb baseline BRAM, the user can do a linear interpolating between 16kb and 32kb cases: **area_20Kb = area_16Kb + (area_32Kb - area_16Kb)/4**. 
-
-## 2. Running DLA-BRAMAC
-The scripts under **dlabramac** can report the speedup and area overhead of DLA-BRAMAC comapred to the baseline DLA by running the following commands inside the BRAMAC repository:
- ```
- cd dlabramac
- python3 dlabramac_2sa.py --nn_type alexnet
- python3 dlabramac_2sa.py --nn_type resnet
- python3 dlabramac_1da.py --nn_type alexnet
- python3 dlabramac_1da.py --nn_type resnet
- ```
-Each two python3 commands evaluate a BRAMAC variant (2sa or 1da) for a specific network (alexnet or resnet), and will generate a **.txt** file to summarize the speedup and area overhead pf DLA-BRAMAC under different MAC precisions. 
-
-## 3. Synthesizing the Embedded Finite-State Machine
-To run this experiment in the BRAMAC repository, Synopsys Design COmpiler and a commercial Technology PDK is required. We are not able to disclose any information about the technology PDK due to non-disclosure agreement with the third party. But we encourage users to synthesize the systemVerilog using their commercial or free PDKs. We give an example on how to synthesize the embedded finite-state machine for BRAMAC-2SA. The process for synthesize the embedded finite-state machine for BRAMAC-1DA is similar. 
-
-In addition to setting up the target library, the link library, the user can add the following two commands in their Synopsys Design Compiler tcl setup file.  
- ```
- <commands to set up target_library and link_library, leaving for the users>
-
- analyze -format sverilog synopsys/fsm_2sa/fsm_2sa.v
- elaborate fsm_2sa
- check_design
- create_clock clk -name ideal_clock1 -period 0.4
- compile
-
- write -format verilog -hierarchy -output post-synth.v
- write -format ddc     -hierarchy -output post-synth.ddc
- report_resources -nosplit -hierarchy
- report_timing -nosplit -transition_time -nets -attributes
- report_area -nosplit -hierarchy
- report_power -nosplit -hierarchy
- ```
-After running Synopsys Design COmpiler with the above tcl setup file, the area of the embedded finite-state machine will be reported. 
+The first **report.txt** file shows the COFFE results for M4BRAM-S, while the second **report.txt** shows the COFFE results for M4BRAM-L. The area and delay information of M4BRAM is inside the **report.txt** file, under **DUMMY ARRAY AREA CONTRIBUTIONS**. 
