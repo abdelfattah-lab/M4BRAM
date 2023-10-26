@@ -1,0 +1,67 @@
+* "simulator" "PrimeSim HSPICE"
+* "version" "T-2022.06-SP1 linux64"
+* "format" "HSP"
+* "rundate" "20:37:29 06/30/2023 "
+* "netlist" "writedriver_dummy.sp "
+* "runtitle" ".title dummy array write driver"
+* time =    0.            
+* temperature =   25.0000        
+*** BEGIN: Saved Operating Point ***                     
+.option 
++ gmindc=   1.0000p       
+.nodeset
++ n_bl_0 = 686.3822m       
++ n_bl_1 = 686.3822m       
++ n_bl_2 = 686.3822m       
++ n_bl_3 = 686.3822m       
++ n_bl_4 = 686.3822m       
++ n_bl_5 = 686.3822m       
++ n_bl_6 = 686.3822m       
++ n_bl_7 = 686.3822m       
++ n_br_0 = 950.0000m       
++ n_br_1 = 949.9997m       
++ n_br_2 = 950.0000m       
++ n_br_3 = 950.0000m       
++ n_br_4 = 950.0000m       
++ n_br_5 = 950.0000m       
++ n_br_6 = 950.0000m       
++ n_br_7 = 950.0000m       
++ n_in =   0.            
++ n_in1 = 949.9980m       
++ n_in_shaped = 941.3523n       
++ n_invl_out = 303.3763u       
++ n_invr_out = 498.7750n       
++ n_we = 949.9980m       
++ n_we_shaped = 941.3521n       
++ tgate_l = 950.0000m       
++ tgate_r = 950.0000m       
++ vclmpmtj = 653.0000m       
++ vdd = 800.0000m       
++ vdd_lp = 950.0000m       
++ vdd_wr = 950.0000m       
++ vrefmtj = 627.0000m       
++ vsram =   1.0000        
++ vsram_n =   0.            
++ we =   0.            
++ xsram2.n_1_1 = 443.0883m       
++ xsram2.n_1_2 = 443.0883m       
++ xsram3.n_1_1 = 443.0883m       
++ xsram3.n_1_2 = 443.0883m       
++ xsram4.n_1_1 = 443.0883m       
++ xsram4.n_1_2 = 443.0883m       
++ xsram5.n_1_1 = 443.0883m       
++ xsram5.n_1_2 = 443.0883m       
++ xsram6.n_1_1 = 443.0883m       
++ xsram6.n_1_2 = 443.0883m       
++ xsram7.n_1_1 = 443.0883m       
++ xsram7.n_1_2 = 443.0883m       
++ xsram1.n_1_1 = 337.6431n       
++ xsram1.n_1_2 = 950.0000m       
++ xwrite.n_1_1 =  61.2499m       
++ xwrite.n_1_2 = 714.4981m       
++ xwrite.n_din1 = 618.2326n       
++ xwrite.n_dinb = 949.9980m       
++ xwrite.n_web = 949.9993m       
++ xwrite.p_1_1 = 686.3820m       
++ xwrite.p_1_2 = 950.0000m       
+***   END: Saved Operating Point ***                     

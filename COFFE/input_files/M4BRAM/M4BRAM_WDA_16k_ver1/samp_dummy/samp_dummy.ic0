@@ -1,0 +1,66 @@
+* "simulator" "PrimeSim HSPICE"
+* "version" "T-2022.06-SP1 linux64"
+* "format" "HSP"
+* "rundate" "20:37:30 06/30/2023 "
+* "netlist" "samp_dummy.sp "
+* "runtitle" ".title dummy array sense amp"
+* time =    0.            
+* temperature =   25.0000        
+*** BEGIN: Saved Operating Point ***                     
+.option 
++ gmindc=   1.0000p       
+.nodeset
++ n_bl_0 = 950.0000m       
++ n_bl_1 = 950.0000m       
++ n_bl_2 = 950.0000m       
++ n_bl_3 = 950.0000m       
++ n_bl_4 = 950.0000m       
++ n_bl_5 = 950.0000m       
++ n_bl_6 = 950.0000m       
++ n_bl_7 = 950.0000m       
++ n_br_0 = 950.0000m       
++ n_br_1 = 950.0000m       
++ n_br_2 = 950.0000m       
++ n_br_3 = 950.0000m       
++ n_br_4 = 950.0000m       
++ n_br_5 = 950.0000m       
++ n_br_6 = 950.0000m       
++ n_br_7 = 950.0000m       
++ n_in = 950.0000m       
++ n_out = 519.3543n       
++ tgate_l = 950.0000m       
++ tgate_r = 950.0000m       
++ vclmpmtj = 653.0000m       
++ vdd = 800.0000m       
++ vdd_lp = 950.0000m       
++ vdd_se = 950.0000m       
++ vrefmtj = 627.0000m       
++ vsram =   1.0000        
++ vsram_n =   0.            
++ wordline =   0.            
++ xsram2.n_1_1 = 443.0883m       
++ xsram2.n_1_2 = 443.0883m       
++ xsram3.n_1_1 = 443.0883m       
++ xsram3.n_1_2 = 443.0883m       
++ xsram4.n_1_1 = 443.0883m       
++ xsram4.n_1_2 = 443.0883m       
++ xsram5.n_1_1 = 443.0883m       
++ xsram5.n_1_2 = 443.0883m       
++ xsram6.n_1_1 = 443.0883m       
++ xsram6.n_1_2 = 443.0883m       
++ xsram7.n_1_1 = 443.0883m       
++ xsram7.n_1_2 = 443.0883m       
++ xsram1.n_1_1 = 443.0883m       
++ xsram1.n_1_2 = 443.0883m       
++ xwrite.n_1_1 =  84.0316m       
++ xwrite.n_1_2 = 714.4986m       
++ xwrite.n_din1 =   1.2856u       
++ xwrite.n_dinb = 949.9980m       
++ xwrite.n_web = 949.9993m       
++ xwrite.p_1_1 = 949.9996m       
++ xwrite.p_1_2 = 950.0000m       
++ xsamp1.n_1_1 = 950.0000m       
++ xsamp1.n_1_2 = 950.0000m       
++ xsamp1.n_gnd2 = 781.1488m       
++ xsamp1.n_hang = 519.3543n       
+***   END: Saved Operating Point ***                     

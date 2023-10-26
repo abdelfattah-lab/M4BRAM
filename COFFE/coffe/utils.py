@@ -276,6 +276,10 @@ def print_area_and_delay(report_file, fpga_inst):
             str(round(fpga_inst.RAM.precharge_dummy.delay/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(round(fpga_inst.RAM.precharge_dummy.tfall/1e-12,4)).ljust(MIDL_COL_WIDTH) + 
             str(round(fpga_inst.RAM.precharge_dummy.trise/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(fpga_inst.RAM.precharge_dummy.power/1e-6).ljust(LAST_COL_WIDTH))
         
+        print_and_write(report_file, "  " + "Wordline Driver Dummy".ljust(FIRS_COL_WIDTH) + str(round(fpga_inst.area_dict["wordline_dummy_total"]/1e6,3)).ljust(MIDL_COL_WIDTH) + 
+            str(round(fpga_inst.RAM.wordlinedriver_dummy.delay/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(round(fpga_inst.RAM.wordlinedriver_dummy.tfall/1e-12,4)).ljust(MIDL_COL_WIDTH) + 
+            str(round(fpga_inst.RAM.wordlinedriver_dummy.trise/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(fpga_inst.RAM.wordlinedriver_dummy.power/1e-6).ljust(LAST_COL_WIDTH))
+
         #print_and_write(report_file, "  " + "Read Circuit Dummy".ljust(FIRS_COL_WIDTH) + str(round(fpga_inst.area_dict["readcircuit_dummy_total"]/1e6,3)).ljust(MIDL_COL_WIDTH) + 
             #str(round(fpga_inst.RAM.readcircuit_dummy.delay/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(round(fpga_inst.RAM.readcircuit_dummy.tfall/1e-12,4)).ljust(MIDL_COL_WIDTH) + 
             #str(round(fpga_inst.RAM.readcircuit_dummy.trise/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(fpga_inst.RAM.readcircuit_dummy.power/1e-6).ljust(LAST_COL_WIDTH))
@@ -288,18 +292,14 @@ def print_area_and_delay(report_file, fpga_inst):
             str(round(fpga_inst.RAM.writedriver_dummy.delay/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(round(fpga_inst.RAM.writedriver_dummy.tfall/1e-12,4)).ljust(MIDL_COL_WIDTH) + 
             str(round(fpga_inst.RAM.writedriver_dummy.trise/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(fpga_inst.RAM.writedriver_dummy.power/1e-6).ljust(LAST_COL_WIDTH))
 
-        print_and_write(report_file, "  " + "Full Adder Dummy".ljust(FIRS_COL_WIDTH) + str(round(fpga_inst.area_dict["fulladder_dummy_total"]/1e6,3)).ljust(MIDL_COL_WIDTH) + 
-            str(round(fpga_inst.RAM.fulladder_dummy.delay/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(round(fpga_inst.RAM.fulladder_dummy.tfall/1e-12,4)).ljust(MIDL_COL_WIDTH) + 
-            str(round(fpga_inst.RAM.fulladder_dummy.trise/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(fpga_inst.RAM.fulladder_dummy.power/1e-6).ljust(LAST_COL_WIDTH))
-        
-        print_and_write(report_file, "  " + "Manchester Adder Dummy".ljust(FIRS_COL_WIDTH) + str(round(fpga_inst.area_dict["manchester4_dummy_total"]/1e6,3)).ljust(MIDL_COL_WIDTH) + 
-            str(round(fpga_inst.RAM.manchester4_dummy.delay/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(round(fpga_inst.RAM.manchester4_dummy.tfall/1e-12,4)).ljust(MIDL_COL_WIDTH) + 
-            str(round(fpga_inst.RAM.manchester4_dummy.trise/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(fpga_inst.RAM.manchester4_dummy.power/1e-6).ljust(LAST_COL_WIDTH))
-
         print_and_write(report_file, "  " + "Carry Lookahead Adder Dummy".ljust(FIRS_COL_WIDTH) + str(round(fpga_inst.area_dict["lookahead4_dummy_total"]/1e6,3)).ljust(MIDL_COL_WIDTH) + 
             str(round(fpga_inst.RAM.lookahead4_dummy.delay/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(round(fpga_inst.RAM.lookahead4_dummy.tfall/1e-12,4)).ljust(MIDL_COL_WIDTH) + 
             str(round(fpga_inst.RAM.lookahead4_dummy.trise/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(fpga_inst.RAM.lookahead4_dummy.power/1e-6).ljust(LAST_COL_WIDTH))
-
+        
+        print_and_write(report_file, "  " + "Mux 4:1 Dummy".ljust(FIRS_COL_WIDTH) + str(round(fpga_inst.area_dict["mux4_dummy_total"]/1e6,3)).ljust(MIDL_COL_WIDTH) + 
+            str(round(fpga_inst.RAM.mux4_dummy.delay/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(round(fpga_inst.RAM.mux4_dummy.tfall/1e-12,4)).ljust(MIDL_COL_WIDTH) + 
+            str(round(fpga_inst.RAM.mux4_dummy.trise/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(fpga_inst.RAM.mux4_dummy.power/1e-6).ljust(LAST_COL_WIDTH))
+        
         print_and_write(report_file, "  " + "Mux 3:1 Dummy".ljust(FIRS_COL_WIDTH) + str(round(fpga_inst.area_dict["mux3_dummy_total"]/1e6,3)).ljust(MIDL_COL_WIDTH) + 
             str(round(fpga_inst.RAM.mux3_dummy.delay/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(round(fpga_inst.RAM.mux3_dummy.tfall/1e-12,4)).ljust(MIDL_COL_WIDTH) + 
             str(round(fpga_inst.RAM.mux3_dummy.trise/1e-12,4)).ljust(MIDL_COL_WIDTH) + str(fpga_inst.RAM.mux3_dummy.power/1e-6).ljust(LAST_COL_WIDTH))
@@ -380,6 +380,7 @@ def print_block_area(report_file, fpga_inst):
                     sampdummytotal = fpga_inst.area_dict["samp_dummy_total"]/1000000
                     writedriverdummytotal = fpga_inst.area_dict["writedriver_dummy_total"]/1000000
                     lookahead4dummytotal = fpga_inst.area_dict["lookahead4_dummy_total"]/1000000
+                    mux4dummytotal = fpga_inst.area_dict["mux4_dummy_total"]/1000000
                     mux3dummytotal = fpga_inst.area_dict["mux3_dummy_total"]/1000000
                     mux2dummytotal = fpga_inst.area_dict["mux2_dummy_total"]/1000000
 
@@ -458,6 +459,7 @@ def print_block_area(report_file, fpga_inst):
                 print_and_write(report_file, "  Sense Amp Dummy Total".ljust(30) + str(round(sampdummytotal,3)).ljust(20) + str(round(sampdummytotal/ram*100,3)) + "%")
                 print_and_write(report_file, "  Write Driver Dummy Total".ljust(30) + str(round(writedriverdummytotal,3)).ljust(20) + str(round(writedriverdummytotal/ram*100,3)) + "%")
                 print_and_write(report_file, "  CLA Adder Dummy Total".ljust(30) + str(round(lookahead4dummytotal,3)).ljust(20) + str(round(lookahead4dummytotal/ram*100,3)) + "%")
+                print_and_write(report_file, "  Mux 4:1 Dummy Total".ljust(30) + str(round(mux4dummytotal,3)).ljust(20) + str(round(mux4dummytotal/ram*100,3)) + "%")
                 print_and_write(report_file, "  Mux 3:1 Dummy Total".ljust(30) + str(round(mux3dummytotal,3)).ljust(20) + str(round(mux3dummytotal/ram*100,3)) + "%")
                 print_and_write(report_file, "  Mux 2:1 Dummy Total".ljust(30) + str(round(mux2dummytotal,3)).ljust(20) + str(round(mux2dummytotal/ram*100,3)) + "%")
                 print_and_write(report_file, "  Dummy Array Area Overhead".ljust(30) + str(round(overheaddummytotal,3)).ljust(20) + str(round(overheaddummytotal/ram*100,3)) + "%")
@@ -557,7 +559,8 @@ def load_arch_params(filename):
         'vdd_low_power': 0.95,
         'number_of_banks': 1,
         'enable_cim': 0, # Added by Yuzong Chen (yc2367@cornell.edu)
-        'numberofrows_dummy': 0, # Added by Yuzong Chen (yc2367@cornell.edu)
+        'number_of_rows_dummy': 0, # Added by Yuzong Chen (yc2367@cornell.edu)
+        'number_of_sub_dummy_arrays': 0, # Added by Yuzong Chen (yc2367@cornell.edu)
         'gate_length': -1,
         'rest_length_factor': -1,
         'min_tran_width': -1,
@@ -647,8 +650,10 @@ def load_arch_params(filename):
             arch_params['number_of_banks'] = int(value)
         elif param == 'enable_cim': # Added by Yuzong Chen (yc2367@cornell.edu)
             arch_params['enable_cim'] = int(value) # Added by Yuzong Chen (yc2367@cornell.edu)
-        elif param == 'numberofrows_dummy': # Added by Yuzong Chen (yc2367@cornell.edu)
-            arch_params['numberofrows_dummy'] = int(value) # Added by Yuzong Chen (yc2367@cornell.edu)
+        elif param == 'number_of_rows_dummy': # Added by Yuzong Chen (yc2367@cornell.edu)
+            arch_params['number_of_rows_dummy'] = int(value) # Added by Yuzong Chen (yc2367@cornell.edu)
+        elif param == 'number_of_sub_dummy_arrays': # Added by Yuzong Chen (yc2367@cornell.edu)
+            arch_params['number_of_sub_dummy_arrays'] = int(value) # Added by Yuzong Chen (yc2367@cornell.edu)
         elif param == 'conf_decoder_bits':
             arch_params['conf_decoder_bits'] = int(value) 
         #process technology parameters

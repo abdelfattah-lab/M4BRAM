@@ -398,7 +398,7 @@ def get_eval_delay(fpga_inst, opt_type, subcircuit, tfall, trise, low_voltage, i
 
 		# outputcrossbar
 		ram_delay +=fpga_inst.RAM.pgateoutputcrossbar.delay
-
+		
 		if is_ram_component == 0:
 			return path_delay
 		else:
@@ -406,7 +406,6 @@ def get_eval_delay(fpga_inst, opt_type, subcircuit, tfall, trise, low_voltage, i
 
 
 def get_current_delay(fpga_inst, is_ram_component):
-
 
 	path_delay = 0
 		
@@ -496,7 +495,7 @@ def get_final_delay(fpga_inst, opt_type, subcircuit, tfall, trise, is_ram_compon
 
 	# final delay should not be negative, something went wrong :(
 	if delay < 0 :
-			print "ERROR: final delat is negative"
+			print "ERROR: final delay is negative"
 			print "***Negative delay: " + str(delay) + " in " + subcircuit.name + " ***"
 			exit(2)
 	subcircuit.delay = delay
@@ -514,7 +513,6 @@ def get_final_delay(fpga_inst, opt_type, subcircuit, tfall, trise, is_ram_compon
 			# The critical path is the ripple path and the skip of the first one + the skip path of blocks in between, and the ripple and sum of the last block + the time it takes to load the wire in between
 			path_delay = (fpga_inst.carrychain.delay * skip_size  + fpga_inst.carrychainand.delay + fpga_inst.carrychainskipmux.delay) + 2 * fpga_inst.carrychainskipmux.delay + fpga_inst.carrychain.delay * skip_size + fpga_inst.carrychainperf.delay +  (3 - fpga_inst.specs.FAs_per_flut) * fpga_inst.carrychaininter.delay
 		return path_delay
-
 
 	if opt_type == "local":
 		return delay
@@ -546,7 +544,7 @@ def get_final_delay(fpga_inst, opt_type, subcircuit, tfall, trise, is_ram_compon
 		if path_delay < 0 :
 			print "***Negative path delay: " + str(path_delay) + " in " + subcircuit.name + " ***"
 			exit(2)
-		
+
 		return path_delay
 		
 	
@@ -2785,6 +2783,7 @@ def size_fpga_transistors(fpga_inst, run_options, spice_interface):
 		if fpga_inst.specs.enable_bram_block == 1:
 			# Added by Yuzong Chen (yc2367@cornell.edu)
 			if (fpga_inst.RAM.memory_technology =="SRAM") and (fpga_inst.specs.enable_cim == 1):
+				'''
 				#######################################################
 				## Size SRAM Dummy Array Ripple-Carry Adder
 				#######################################################
@@ -2849,6 +2848,39 @@ def size_fpga_transistors(fpga_inst, run_options, spice_interface):
 					print "Current Cost: " + str(current_cost)
 
 				time_before_sizing = time.time()
+				'''
+
+				#######################################################
+				## Size SRAM Dummy Array Wordline Driver
+				#######################################################
+
+				name = fpga_inst.RAM.wordlinedriver_dummy.name
+				# If this is the first iteration, use the 'initial_transistor_sizes' as the starting sizes. 
+				# If it's not the first iteration, we use the transistor sizes of the previous iteration as the starting sizes.
+				if iteration == 1:
+					quick_mode_dict[name] = 1
+					starting_transistor_sizes = format_transistor_sizes_to_basic_subciruits(fpga_inst.RAM.wordlinedriver_dummy.initial_transistor_sizes)
+				else:
+					starting_transistor_sizes = sizing_results_list[len(sizing_results_list)-1][name]
+				
+				# Size the transistors of this subcircuit
+				if quick_mode_dict[name] == 1:
+					sizing_results_dict[name], sizing_results_detailed_dict[name] = size_subcircuit_transistors(fpga_inst, fpga_inst.RAM.wordlinedriver_dummy, "local", re_erf, area_opt_weight, delay_opt_weight, iteration, starting_transistor_sizes, spice_interface, 1, 0)
+				else:
+					sizing_results_dict[name]= sizing_results_list[len(sizing_results_list)-1][name]
+					sizing_results_detailed_dict[name] = sizing_results_detailed_list[len(sizing_results_list)-1][name]   
+
+				if quick_mode_dict[name] == 1:
+					time_after_sizing = time.time()
+					past_cost = current_cost
+					current_cost =  cost_function(get_eval_area(fpga_inst, opt_type, fpga_inst.RAM.wordlinedriver_dummy, 1, 0), fpga_inst.RAM.wordlinedriver_dummy.delay, area_opt_weight, delay_opt_weight)   
+					if (past_cost - current_cost)/past_cost < fpga_inst.specs.quick_mode_threshold:
+						quick_mode_dict[name] = 0
+
+					print "Duration: " + str(time_after_sizing - time_before_sizing)
+					print "Current Cost: " + str(current_cost)
+
+				time_before_sizing = time.time()
 
 				
 				#######################################################
@@ -2882,6 +2914,8 @@ def size_fpga_transistors(fpga_inst, run_options, spice_interface):
 					print "Current Cost: " + str(current_cost)
 
 				time_before_sizing = time.time()
+
+				
 	
 
 			############################################

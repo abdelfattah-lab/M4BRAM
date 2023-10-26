@@ -5560,8 +5560,8 @@ def generate_dedicated_driver_top (name, top_name, num_bufs):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the precharge top-level path for BRAM-CIM dummy array
-def generate_precharge_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
+# This is the precharge top-level path for M4BRAM dummy array
+def generate_precharge_dummy_top_lp(name, numberofsrams, number_of_rows_dummy):
 
     # Create directories
     if not os.path.exists(name):
@@ -5605,9 +5605,9 @@ def generate_precharge_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
     the_file.write("********************************************************************************\n\n")
     the_file.write("* Total delays\n")
     the_file.write(".MEASURE TRAN meas_total_tfall TRIG V(v_precharge) VAL='supply_v_lp/2' FALL=1\n")
-    the_file.write("+    TARG V(n_bl_"+str(numberofrows_dummy)+") VAL='0.99*supply_v_lp' RISE=1\n")
+    the_file.write("+    TARG V(n_bl_"+str(number_of_rows_dummy)+") VAL='0.99*supply_v_lp' RISE=1\n")
     the_file.write(".MEASURE TRAN meas_total_trise TRIG V(v_precharge) VAL='supply_v_lp/2' FALL=1\n")
-    the_file.write("+    TARG V(n_bl_"+str(numberofrows_dummy)+") VAL='0.99*supply_v_lp' RISE=1\n\n")
+    the_file.write("+    TARG V(n_bl_"+str(number_of_rows_dummy)+") VAL='0.99*supply_v_lp' RISE=1\n\n")
 
     the_file.write(".MEASURE TRAN meas_logic_low_voltage FIND V(v_precharge) AT=3n\n\n")
     the_file.write("* Measure the power required to propagate a rise and a fall transition through the subcircuit at 250MHz.\n")
@@ -5622,7 +5622,7 @@ def generate_precharge_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
     the_file.write("********************************************************************************\n\n")
     the_file.write("xinv n_in v_precharge vdd_lp gnd inv l=gate_length w=2*gate_length\n")
     the_file.write("xprecharge v_precharge n_bl_0 n_br_0 vdd_eq gnd precharge_dummy\n")
-    for i in range(1, numberofrows_dummy+1):
+    for i in range(1, number_of_rows_dummy+1):
         the_file.write("Xwire"+str(i)+" n_bl_"+str(i-1)+" n_bl_"+str(i)+" wire Rw=wire_memorycell_vertical_res/"+str(numberofsrams)+" Cw=wire_memorycell_vertical_cap/"+str(numberofsrams)+"\n")
         the_file.write("Xwirer"+str(i)+" n_br_"+str(i-1)+" n_br_"+str(i)+" wire Rw=wire_memorycell_vertical_res/"+str(numberofsrams)+" Cw=wire_memorycell_vertical_cap/"+str(numberofsrams)+"\n")
         the_file.write("Xsram"+str(i)+" gnd gnd n_bl_"+str(i)+" gnd n_br_"+str(i)+" gnd vdd gnd memorycell\n")
@@ -5630,10 +5630,10 @@ def generate_precharge_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
     the_file.write("xtgate1 n_bl_0 tgate_l gnd vdd_lp vdd_lp gnd RAM_tgate_lp\n")
     the_file.write("xtgater n_br_0 tgate_r gnd vdd_lp vdd_lp gnd RAM_tgate_lp\n")
     #inverters on path:
-    the_file.write("xinvl n_bl_"+str(numberofrows_dummy)+" n_invl_out vdd_lp gnd inv_lp Wn=45n Wp=55n\n")
-    the_file.write("xinvr n_br_"+str(numberofrows_dummy)+" n_invr_out vdd_lp gnd inv_lp Wn=45n Wp=55n\n")
+    the_file.write("xinvl n_bl_"+str(number_of_rows_dummy)+" n_invl_out vdd_lp gnd inv_lp Wn=45n Wp=55n\n")
+    the_file.write("xinvr n_br_"+str(number_of_rows_dummy)+" n_invr_out vdd_lp gnd inv_lp Wn=45n Wp=55n\n")
     #samp and column decoder:
-    the_file.write("xwrite gnd gnd n_bl_"+str(numberofrows_dummy)+" n_br_"+str(numberofrows_dummy)+" vdd_lp gnd writedriver_dummy\n")
+    the_file.write("xwrite gnd gnd n_bl_"+str(number_of_rows_dummy)+" n_br_"+str(number_of_rows_dummy)+" vdd_lp gnd writedriver_dummy\n")
 
     the_file.write(".IC V(n_bl_0) = 0\n")
     the_file.write(".IC V(n_br_0) = 'supply_v_lp'\n")
@@ -5649,8 +5649,106 @@ def generate_precharge_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the sense amp top-level path for BRAM-CIM dummy array
-def generate_samp_dummy_top_part2_lp(name, numberofsrams, numberofrows_dummy, difference):
+# This is the wordline driver for M4BRAM dummy array:
+def generate_wordline_driver_dummy_top_lp(name, sramcount, nandsize):
+
+    # Create the directory
+    if not os.path.exists(name):
+        os.makedirs(name)  
+    # Change to directory    
+    os.chdir(name)
+
+    # Create the spice file and generate the netlist
+    filename = name + ".sp"
+    the_file = open(filename, 'w')
+    the_file.write(".TITLE wordline driver\n\n")
+
+
+    the_file.write("********************************************************************************\n")
+    the_file.write("** Include libraries, parameters and other\n")
+    the_file.write("********************************************************************************\n\n")
+    the_file.write(".LIB \"../includes.l\" INCLUDES\n\n")
+
+    the_file.write("********************************************************************************\n")
+    the_file.write("** Setup and input\n")
+    the_file.write("********************************************************************************\n\n")
+    the_file.write(".TRAN 1p 4n SWEEP DATA=sweep_data\n")
+    the_file.write(".OPTIONS BRIEF=1\n\n")
+    the_file.write("* Input signal\n")
+    the_file.write("VIN n_in gnd PULSE (0 supply_v_lp 0 0 0 2n 4n)\n")
+
+    
+    the_file.write("* Power rail for the circuit under test.\n")
+    the_file.write("* This allows us to measure power of a circuit under test without measuring the power of wave shaping and load circuitry.\n")
+    the_file.write("V_wordline vdd_wordline gnd supply_v_lp\n\n")
+
+
+    the_file.write("********************************************************************************\n")
+    the_file.write("** Measurement\n")
+    the_file.write("********************************************************************************\n\n")
+    the_file.write("* inv_" + name + " delay\n")
+    the_file.write(".MEASURE TRAN meas_inv_nand"+str(nandsize)+"_"+name+"_1_tfall TRIG V(n_1_1) VAL='supply_v_lp/2' RISE=1\n")
+    the_file.write("+    TARG V(Xwordline.n_1_1) VAL='supply_v_lp/2' FALL=1\n")
+    the_file.write(".MEASURE TRAN meas_inv_nand"+str(nandsize)+"_"+name+"_1_trise TRIG V(n_1_1) VAL='supply_v_lp/2' FALL=1\n")
+    the_file.write("+    TARG V(Xwordline.n_1_1) VAL='supply_v_lp/2' RISE=1\n\n")
+
+    the_file.write("* inv_" + name + " delay\n")
+    the_file.write(".MEASURE TRAN meas_inv_"+name+"_2_tfall TRIG V(n_1_1) VAL='supply_v_lp/2' FALL=1\n")
+    the_file.write("+    TARG V(Xwordline.n_1_2) VAL='supply_v_lp/2' FALL=1\n")
+    the_file.write(".MEASURE TRAN meas_inv_"+name+"_2_trise TRIG V(n_1_1) VAL='supply_v_lp/2' RISE=1\n")
+    the_file.write("+    TARG V(Xwordline.n_1_2) VAL='supply_v_lp/2' RISE=1\n\n")
+
+    the_file.write("* inv_" + name + " delay\n")
+    the_file.write(".MEASURE TRAN meas_inv_"+name+"_3_tfall TRIG V(n_1_1) VAL='supply_v_lp/2' RISE=1\n")
+    the_file.write("+    TARG V(Xwordline.n_1_3) VAL='supply_v_lp/2' FALL=1\n")
+    the_file.write(".MEASURE TRAN meas_inv_"+name+"_3_trise TRIG V(n_1_1) VAL='supply_v_lp/2' FALL=1\n")
+    the_file.write("+    TARG V(Xwordline.n_1_3) VAL='supply_v_lp/2' RISE=1\n\n")
+
+    the_file.write("* inv_" + name + " delay\n")
+    the_file.write(".MEASURE TRAN meas_inv_"+name+"_4_tfall TRIG V(n_1_1) VAL='supply_v_lp/2' FALL=1\n")
+    the_file.write("+    TARG V(n_1_"+str(sramcount + 1)+") VAL='supply_v_lp * 0.1' FALL=1\n")
+    the_file.write(".MEASURE TRAN meas_inv_"+name+"_4_trise TRIG V(n_1_1) VAL='supply_v_lp/2' RISE=1\n")
+    the_file.write("+    TARG V(n_1_"+str(sramcount+1)+") VAL='supply_v_lp * 0.9' RISE=1\n\n")
+
+    the_file.write("* Total delays\n")
+    the_file.write(".MEASURE TRAN meaz1_total_tfall TRIG V(n_1_1) VAL='supply_v_lp/2' FALL=1\n")
+    the_file.write("+    TARG V(n_1_"+str(sramcount+1)+") VAL='supply_v_lp * 0.1' FALL=1\n")
+    the_file.write(".MEASURE TRAN meaz1_total_trise TRIG V(n_1_1) VAL='supply_v_lp/2' RISE=1\n")
+    the_file.write("+    TARG V(n_1_"+str(sramcount+1)+") VAL='supply_v_lp * 0.9' RISE=1\n\n")
+
+
+    the_file.write(".MEASURE TRAN meas_logic_low_voltage FIND V(n_in) AT=3n\n\n")
+
+    the_file.write("* Measure the power required to propagate a rise and a fall transition through the subcircuit at 250MHz.\n")
+    the_file.write(".MEASURE TRAN meas_current INTEGRAL I(V_wordline) FROM=0ns TO=4ns\n")
+    the_file.write(".MEASURE TRAN meas_avg_power PARAM = '-(meas_current/4n)*supply_v_lp'\n\n")
+
+    
+    the_file.write("********************************************************************************\n")
+    the_file.write("** Circuit\n")
+    the_file.write("********************************************************************************\n\n")
+    
+    #last stage of row decoder:
+    the_file.write("Xnandu n_in n_1_1 vdd_lp gnd rowdecoderstage3\n")
+    #Wordline driver:
+    the_file.write("Xwordline n_1_1 n_1_2 vdd_wordline gnd wordline_driver_dummy\n")
+    #RAM load:
+    for i in range(2, sramcount +2):
+        the_file.write("Xmemcell"+str(i)+" n_1_"+str(i)+" gnd gnd gnd gnd gnd vdd_lp gnd memorycell\n")
+        the_file.write("Xwirel"+str(i)+" n_1_"+str(i)+" n_1_"+str(i+1)+" wire Rw=wire_wordline_driver_res/"+str(sramcount)+" Cw=wire_wordline_driver_cap/"+str(sramcount)+"\n")
+
+    the_file.write(".END")
+    the_file.close()
+
+    # Come out of top-level directory
+    os.chdir("../")
+
+    return (name + "/" + name + ".sp")
+
+
+# Added by Yuzong Chen (yc2367@cornell.edu)
+# This is the sense amp top-level path for M4BRAM dummy array
+def generate_samp_dummy_top_part2_lp(name, numberofsrams, number_of_rows_dummy, difference):
 
     # Create directories
     if not os.path.exists(name):
@@ -5707,7 +5805,7 @@ def generate_samp_dummy_top_part2_lp(name, numberofsrams, numberofrows_dummy, di
     the_file.write("** Circuit\n")
     the_file.write("********************************************************************************\n\n")
     the_file.write("xprecharge vdd_lp n_bl_0 n_br_0 vdd_lp gnd precharge_dummy\n")
-    for i in range(2, numberofrows_dummy+1):
+    for i in range(2, number_of_rows_dummy+1):
         #the_file.write("Xwire"+str(i)+" n_bl_"+str(i-1)+" n_bl_"+str(i)+" wire Rw=wire_memorycell_vertical_res/"+str(numberofsrams)+" Cw=wire_memorycell_vertical_cap/"+str(numberofsrams)+"\n")
         #the_file.write("Xwirer"+str(i)+" n_br_"+str(i-1)+" n_br_"+str(i)+" wire Rw=wire_memorycell_vertical_res/"+str(numberofsrams)+" Cw=wire_memorycell_vertical_cap/"+str(numberofsrams)+"\n")
         the_file.write("Xwire"+str(i)+" n_bl_"+str(i-1)+" n_bl_"+str(i)+" wire Rw=wire_memorycell_vertical_res/"+str(numberofsrams)+" Cw=wire_memorycell_vertical_cap/"+str(numberofsrams)+"\n")
@@ -5729,7 +5827,7 @@ def generate_samp_dummy_top_part2_lp(name, numberofsrams, numberofrows_dummy, di
     #the_file.write(".IC V(Xsram"+str(numberofsrams)+".n_1_1) = 'supply_v'\n")
     #we'll sense the left side of the sram
     #precharge bitlines
-    for i in range(0, numberofrows_dummy+1):
+    for i in range(0, number_of_rows_dummy+1):
         the_file.write(".IC V(n_bl_"+str(i)+") = 'supply_v_lp'\n")
         the_file.write(".IC V(n_br_"+str(i)+") = 'supply_v_lp'\n")  
     
@@ -5741,12 +5839,12 @@ def generate_samp_dummy_top_part2_lp(name, numberofsrams, numberofrows_dummy, di
     the_file.write(".IC V(xsamp1.n_1_1) = 'supply_v_lp'\n")
 
     #tgates on path:
-    the_file.write("xtgate1 n_bl_"+str(numberofrows_dummy)+" tgate_l vdd_lp gnd vdd_lp gnd RAM_tgate_lp\n")
-    the_file.write("xtgater n_br_"+str(numberofrows_dummy)+" tgate_r vdd_lp gnd vdd_lp gnd RAM_tgate_lp\n")
+    the_file.write("xtgate1 n_bl_"+str(number_of_rows_dummy)+" tgate_l vdd_lp gnd vdd_lp gnd RAM_tgate_lp\n")
+    the_file.write("xtgater n_br_"+str(number_of_rows_dummy)+" tgate_r vdd_lp gnd vdd_lp gnd RAM_tgate_lp\n")
     
     #samp and column decoder:
-    the_file.write("xwrite gnd gnd n_bl_"+str(numberofrows_dummy)+" n_br_"+str(numberofrows_dummy)+" vdd_lp gnd writedriver_dummy\n")
-    the_file.write("xsamp1 gnd n_bl_"+str(numberofrows_dummy)+" n_br_"+str(numberofrows_dummy)+" n_out vdd_se gnd samp_dummy\n")
+    the_file.write("xwrite gnd gnd n_bl_"+str(number_of_rows_dummy)+" n_br_"+str(number_of_rows_dummy)+" vdd_lp gnd writedriver_dummy\n")
+    the_file.write("xsamp1 gnd n_bl_"+str(number_of_rows_dummy)+" n_br_"+str(number_of_rows_dummy)+" n_out vdd_se gnd samp_dummy\n")
 
     the_file.write(".END")
     the_file.close()
@@ -5759,8 +5857,8 @@ def generate_samp_dummy_top_part2_lp(name, numberofsrams, numberofrows_dummy, di
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the read circuit top-level path for BRAM-CIM dummy array
-def generate_readcircuit_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
+# This is the read circuit top-level path for M4BRAM dummy array
+def generate_readcircuit_dummy_top_lp(name, numberofsrams, number_of_rows_dummy):
     # Create directories
     if not os.path.exists(name):
         os.makedirs(name)  
@@ -5838,8 +5936,8 @@ def generate_readcircuit_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the write driver for BRAM-CIM dummy array:
-def generate_writedriver_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
+# This is the write driver for M4BRAM dummy array:
+def generate_writedriver_dummy_top_lp(name, numberofsrams, number_of_rows_dummy):
 
     # Create directories
     if not os.path.exists(name):
@@ -5908,7 +6006,7 @@ def generate_writedriver_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
     the_file.write("X_inv_shape_2 we n_we vdd_lp gnd inv_lp Wn=45n Wp=55n\n")
     the_file.write("X_inv_shape_3 n_we n_we_shaped vdd_lp gnd inv_lp Wn=45n Wp=55n\n")
     the_file.write("xprecharge vdd_lp n_bl_0 n_br_0 vdd_lp gnd precharge_dummy\n")
-    for i in range(2, numberofrows_dummy+1):
+    for i in range(2, number_of_rows_dummy+1):
         the_file.write("Xwire"+str(i)+" n_bl_"+str(i-1)+" n_bl_"+str(i)+" wire Rw=wire_memorycell_vertical_res/"+str(numberofsrams)+" Cw=wire_memorycell_vertical_cap/"+str(numberofsrams)+"\n")
         the_file.write("Xwirer"+str(i)+" n_br_"+str(i-1)+" n_br_"+str(i)+" wire Rw=wire_memorycell_vertical_res/"+str(numberofsrams)+" Cw=wire_memorycell_vertical_cap/"+str(numberofsrams)+"\n")
         the_file.write("Xsram"+str(i)+" gnd gnd n_bl_"+str(i)+" gnd n_br_"+str(i)+" gnd vdd_lp gnd memorycell\n")
@@ -5925,16 +6023,16 @@ def generate_writedriver_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
     the_file.write("xtgate1 n_bl_0 tgate_l gnd vdd_lp vdd_lp gnd RAM_tgate_lp\n")
     the_file.write("xtgater n_br_0 tgate_r gnd vdd_lp vdd_lp gnd RAM_tgate_lp\n")
     #inverters on path:
-    the_file.write("xinvl n_bl_"+str(numberofrows_dummy)+" n_invl_out vdd_lp gnd inv_lp Wn=45n Wp=55n\n")
-    the_file.write("xinvr n_br_"+str(numberofrows_dummy)+" n_invr_out vdd_lp gnd inv_lp Wn=45n Wp=55n\n")
+    the_file.write("xinvl n_bl_"+str(number_of_rows_dummy)+" n_invl_out vdd_lp gnd inv_lp Wn=45n Wp=55n\n")
+    the_file.write("xinvr n_br_"+str(number_of_rows_dummy)+" n_invr_out vdd_lp gnd inv_lp Wn=45n Wp=55n\n")
     #initial conditions for the bitline:
     the_file.write(".IC V(tgate_r) = 'supply_v_lp'\n")
     the_file.write(".IC V(tgate_l) = 'supply_v_lp'\n")
-    for i in range(1, numberofrows_dummy+1):
+    for i in range(1, number_of_rows_dummy+1):
         the_file.write(".IC V(n_br_"+str(i-1)+") = 'supply_v_lp'\n")
         the_file.write(".IC V(n_br_"+str(i-1)+") = 'supply_v_lp'\n")     
 
-    the_file.write("xwrite n_we_shaped n_in_shaped n_bl_"+str(numberofrows_dummy)+" n_br_"+str(numberofrows_dummy)+" vdd_wr gnd writedriver_dummy\n")
+    the_file.write("xwrite n_we_shaped n_in_shaped n_bl_"+str(number_of_rows_dummy)+" n_br_"+str(number_of_rows_dummy)+" vdd_wr gnd writedriver_dummy\n")
 
     the_file.write(".END")
     the_file.close()
@@ -5946,9 +6044,9 @@ def generate_writedriver_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the full adder for BRAM-CIM dummy array:
+# This is the full adder for M4BRAM dummy array:
 # We are not going to use this for dummy array since the full adder should use normal transistors for high performance
-def generate_fulladder_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
+def generate_fulladder_dummy_top_lp(name, numberofsrams, number_of_rows_dummy):
 
     # Create directories
     if not os.path.exists(name):
@@ -6016,8 +6114,8 @@ def generate_fulladder_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the full adder for BRAM-CIM dummy array:
-def generate_fulladder_dummy_top(name, numberofsrams, numberofrows_dummy):
+# This is the full adder for M4BRAM dummy array:
+def generate_fulladder_dummy_top(name, numberofsrams, number_of_rows_dummy):
 
     # Create directories
     if not os.path.exists(name):
@@ -6085,8 +6183,76 @@ def generate_fulladder_dummy_top(name, numberofsrams, numberofrows_dummy):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the full adder for BRAM-CIM dummy array:
-def generate_mux3_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
+# This is the 4:1 mux for M4BRAM dummy array:
+def generate_mux4_dummy_top_lp(name):
+
+    # Create directories
+    if not os.path.exists(name):
+        os.makedirs(name)  
+    # Change to directory    
+    os.chdir(name)
+
+    filename = name + ".sp"
+    the_file = open(filename, 'w')
+    the_file.write(".TITLE M4BRAM duplication shuffler 4:1 mux\n\n")
+
+    the_file.write("********************************************************************************\n")
+    the_file.write("** Include libraries, parameters and other\n")
+    the_file.write("********************************************************************************\n\n")
+    the_file.write(".LIB \"../includes.l\" INCLUDES\n\n")
+
+    the_file.write("********************************************************************************\n")
+    the_file.write("** Setup and input\n")
+    the_file.write("********************************************************************************\n\n")
+    the_file.write(".TRAN 1p 5n SWEEP DATA=sweep_data\n")
+    the_file.write(".OPTIONS BRIEF=1\n\n")
+    the_file.write("* Input signal\n")
+    the_file.write("VIN op gnd PULSE   (0 supply_v_lp 0.1n 0 0 2n 4n)\n")
+    the_file.write("Vsel sel gnd PULSE (0 supply_v_lp 0    0 0 4n 8n)\n")
+    the_file.write("* Power rail for the circuit under test.\n")
+    the_file.write("* This allows us to measure power of a circuit under test without measuring the power of wave shaping and load circuitry.\n")
+    the_file.write("V_mux4 vdd_mux4 gnd supply_v_lp\n\n")
+
+    the_file.write("********************************************************************************\n")
+    the_file.write("** Measurement\n")
+    the_file.write("********************************************************************************\n\n")
+
+    # We will just measure the carry propagation delay
+    the_file.write("* Total delays\n")
+    the_file.write(".MEASURE TRAN meas_total_trise TRIG V(op) VAL='supply_v_lp/2' RISE=1\n")
+    the_file.write("+    TARG V(mux4_out) VAL='supply_v_lp/2' RISE=1\n")
+    the_file.write(".MEASURE TRAN meas_total_tfall TRIG V(op) VAL='supply_v_lp/2' FALL=1\n")
+    the_file.write("+    TARG V(mux4_out) VAL='supply_v_lp/2' FALL=1\n\n")
+
+    the_file.write(".MEASURE TRAN meas_logic_low_voltage FIND V(gnd) AT=3n\n\n")
+    the_file.write("* Measure the power required to propagate a rise and a fall transition through the subcircuit at 250MHz.\n")
+    the_file.write(".MEASURE TRAN meas_current INTEGRAL I(V_mux4) FROM=0ns TO=4ns\n")
+    the_file.write(".MEASURE TRAN meas_avg_power PARAM = '-(meas_current/4n)*supply_v_lp'\n\n")
+    
+    the_file.write("********************************************************************************\n")
+    the_file.write("** Circuit\n")
+    the_file.write("********************************************************************************\n\n")
+    
+    the_file.write("xinv1 sel selbar vdd_lp gnd inv_lp Wn=45n Wp=55n\n")
+    the_file.write("xmux  op mux4_out sel selbar vdd_mux4 gnd mux4_dummy\n")
+
+    # add load to mux4_out
+    the_file.write("xwrite gnd mux4_out n_bl n_br vdd_lp gnd writedriver_dummy\n")
+
+    the_file.write(".IC V(xmux.n_out) = 0\n")
+
+    the_file.write(".END")
+    the_file.close()
+
+    # Come out of top-level directory
+    os.chdir("../")
+
+    return (name + "/" + name + ".sp")
+
+
+# Added by Yuzong Chen (yc2367@cornell.edu)
+# This is the 3:1 mux for M4BRAM dummy array:
+def generate_mux3_dummy_top_lp(name):
 
     # Create directories
     if not os.path.exists(name):
@@ -6153,8 +6319,8 @@ def generate_mux3_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the full adder for BRAM-CIM dummy array:
-def generate_mux2_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
+# This is the 2:1 mux for M4BRAM dummy array:
+def generate_mux2_dummy_top_lp(name):
 
     # Create directories
     if not os.path.exists(name):
@@ -6221,8 +6387,8 @@ def generate_mux2_dummy_top_lp(name, numberofsrams, numberofrows_dummy):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the 4-bit manchester adder for BRAM-CIM dummy array:
-def generate_manchester4_dummy_top(name, numberofsrams, numberofrows_dummy):
+# This is the 4-bit manchester adder for M4BRAM dummy array:
+def generate_manchester4_dummy_top(name, numberofsrams, number_of_rows_dummy):
 
     # Create directories
     if not os.path.exists(name):
@@ -6292,8 +6458,8 @@ def generate_manchester4_dummy_top(name, numberofsrams, numberofrows_dummy):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the 4-bit carry lookahead adder for BRAM-CIM dummy array:
-def generate_lookahead4_dummy_top(name, numberofsrams, numberofrows_dummy):
+# This is the 4-bit carry lookahead adder for M4BRAM dummy array:
+def generate_lookahead4_dummy_top(name, numberofsrams, number_of_rows_dummy):
 
     # Create directories
     if not os.path.exists(name):

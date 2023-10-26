@@ -1,0 +1,58 @@
+* "simulator" "PrimeSim HSPICE"
+* "version" "T-2022.06-SP1 linux64"
+* "format" "HSP"
+* "rundate" "10:45:01 07/01/2023 "
+* "netlist" "rowdecoderstage13.sp "
+* "runtitle" ".title stage one of the small row decoder"
+* time =    0.            
+* temperature =   25.0000        
+*** BEGIN: Saved Operating Point ***                     
+.option 
++ gmindc=   1.0000p       
+.nodeset
++ n_1_1 = 949.9993m       
++ n_1_10 = 949.9977m       
++ n_1_2 = 949.9978m       
++ n_1_3 = 949.9978m       
++ n_1_4 = 949.9977m       
++ n_1_5 = 949.9977m       
++ n_1_6 = 949.9977m       
++ n_1_7 = 949.9977m       
++ n_1_8 = 949.9977m       
++ n_1_9 = 949.9977m       
++ n_hang_10 = 949.8869m       
++ n_hang_3 = 949.8869m       
++ n_hang_4 = 949.8869m       
++ n_hang_5 = 949.8869m       
++ n_hang_6 = 949.8869m       
++ n_hang_7 = 949.8869m       
++ n_hang_8 = 949.8869m       
++ n_hang_9 = 949.8869m       
++ n_in =   0.            
++ vclmpmtj = 653.0000m       
++ vdd = 800.0000m       
++ vdd_lp = 950.0000m       
++ vdd_sec = 950.0000m       
++ vrefmtj = 627.0000m       
++ vsram =   1.0000        
++ vsram_n =   0.            
++ xsec.n_1_1 =   9.2064u       
++ xloadnand2.n_1_1 = 386.5758u       
++ xloadnand3.n_1_1 = 386.5759u       
++ xloadnand4.n_1_1 = 386.5761u       
++ xloadnand5.n_1_1 = 386.5762u       
++ xloadnand6.n_1_1 = 386.5762u       
++ xloadnand7.n_1_1 = 386.5763u       
++ xloadnand8.n_1_1 = 386.5763u       
++ xloadnand9.n_1_1 = 386.5764u       
++ xsec.xrowdecoderstage13_nand.n_z =   6.8192u       
++ xsec.xrowdecoderstage13_nand.n_z2 =   3.7504u       
++ xloadnand2.x0rowdecoderstage3_nand2.n_z = 193.3522u       
++ xloadnand3.x0rowdecoderstage3_nand2.n_z = 193.3523u       
++ xloadnand4.x0rowdecoderstage3_nand2.n_z = 193.3523u       
++ xloadnand5.x0rowdecoderstage3_nand2.n_z = 193.3524u       
++ xloadnand6.x0rowdecoderstage3_nand2.n_z = 193.3524u       
++ xloadnand7.x0rowdecoderstage3_nand2.n_z = 193.3524u       
++ xloadnand8.x0rowdecoderstage3_nand2.n_z = 193.3525u       
++ xloadnand9.x0rowdecoderstage3_nand2.n_z = 193.3525u       
+***   END: Saved Operating Point ***                     

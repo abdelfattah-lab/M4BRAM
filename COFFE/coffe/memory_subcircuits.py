@@ -1314,11 +1314,11 @@ def generate_wordline_driver_lp(spice_filename, circuit_name, nand_size, repeate
 	tran_names_list.append("inv_nand"+str(nand_size)+"_" + circuit_name + "_1_nmos")
 	tran_names_list.append("inv_nand"+str(nand_size)+"_" + circuit_name + "_1_pmos")
 	tran_names_list.append("inv_" + circuit_name + "_2_nmos")
-	tran_names_list.append("inv_" + circuit_name + "_2_nmos")
+	tran_names_list.append("inv_" + circuit_name + "_2_pmos")
 	tran_names_list.append("inv_" + circuit_name + "_3_nmos")
-	tran_names_list.append("inv_" + circuit_name + "_3_nmos")
+	tran_names_list.append("inv_" + circuit_name + "_3_pmos")
 	tran_names_list.append("inv_" + circuit_name + "_4_nmos")
-	tran_names_list.append("inv_" + circuit_name + "_4_nmos")	
+	tran_names_list.append("inv_" + circuit_name + "_4_pmos")	
 	# Create a list of all wires used in this subcircuit
 
 	wire_names_list = [] 
@@ -1357,11 +1357,11 @@ def generate_wordline_driver(spice_filename, circuit_name, nand_size, repeater):
 	tran_names_list.append("inv_nand"+str(nand_size)+"_" + circuit_name + "_1_nmos")
 	tran_names_list.append("inv_nand"+str(nand_size)+"_" + circuit_name + "_1_pmos")
 	tran_names_list.append("inv_" + circuit_name + "_2_nmos")
-	tran_names_list.append("inv_" + circuit_name + "_2_nmos")
+	tran_names_list.append("inv_" + circuit_name + "_2_pmos")
 	tran_names_list.append("inv_" + circuit_name + "_3_nmos")
-	tran_names_list.append("inv_" + circuit_name + "_3_nmos")
+	tran_names_list.append("inv_" + circuit_name + "_3_pmos")
 	tran_names_list.append("inv_" + circuit_name + "_4_nmos")
-	tran_names_list.append("inv_" + circuit_name + "_4_nmos")	
+	tran_names_list.append("inv_" + circuit_name + "_4_pmos")	
 	# Create a list of all wires used in this subcircuit
 	wire_names_list = [] 
 

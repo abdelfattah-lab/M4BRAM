@@ -1,12 +1,12 @@
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This file contains subcircuits for BRAM-CIM dummy array
+# This file contains subcircuits for M4BRAM dummy array
 
 
 import math
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the precharging circuitry for BRAM-CIM dummy array
+# This is the precharging circuitry for M4BRAM dummy array
 def generate_precharge_dummy_lp(spice_filename, circuit_name):
 
 	# Open SPICE file for appending
@@ -32,7 +32,7 @@ def generate_precharge_dummy_lp(spice_filename, circuit_name):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the full-swing read circuit for BRAM-CIM dummy array
+# This is the full-swing read circuit for M4BRAM dummy array
 # We are not going to size this circuit, the pmos/nmos ratio is determined by the stardard cell pmos/nmos ratio in 28nm technology 
 def generate_readcircuit_dummy_lp(spice_filename, circuit_name):
 
@@ -61,7 +61,43 @@ def generate_readcircuit_dummy_lp(spice_filename, circuit_name):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the sense amp circuit for BRAM-CIM dummy array
+# This is the wordline driver
+def generate_wordline_driver_dummy_lp(spice_filename, circuit_name, nand_size):
+
+	# Open SPICE file for appending
+	spice_file = open(spice_filename, 'a')
+	
+	# Generate SPICE subcircuits
+
+	# Create the fully-on MUX circuit
+	spice_file.write("******************************************************************************************\n")
+	spice_file.write("* " + circuit_name + " subcircuit dummy-array wordline_driver \n")
+	spice_file.write("******************************************************************************************\n")
+	spice_file.write(".SUBCKT " + circuit_name + " n_in n_out n_vdd n_gnd\n")
+	spice_file.write("X" + circuit_name + "_nand"+str(nand_size)+" n_in n_1_1 n_vdd n_gnd nand"+str(nand_size)+"_lp Wn=inv_nand"+str(nand_size)+"_" + circuit_name + "_1_nmos Wp=inv_nand"+str(nand_size)+"_" + circuit_name + "_1_pmos\n")
+	spice_file.write("X_inv" + circuit_name + "_2 n_1_1 n_1_2 n_vdd n_gnd inv_lp Wn=inv_" + circuit_name + "_2_nmos Wp=inv_" + circuit_name + "_2_pmos\n")
+	spice_file.write("X_inv" + circuit_name + "_3 n_1_2 n_1_3 n_vdd n_gnd inv_lp Wn=inv_" + circuit_name + "_3_nmos Wp=inv_" + circuit_name + "_3_pmos\n")
+	spice_file.write("X_inv" + circuit_name + "_4 n_1_3 n_out n_vdd n_gnd inv_lp Wn=inv_" + circuit_name + "_4_nmos Wp=inv_" + circuit_name + "_4_pmos\n")
+	spice_file.write(".ENDS\n\n\n")
+	
+	# Close SPICE file
+	spice_file.close()
+	
+	# Create a list of all transistors used in this subcircuit
+	tran_names_list = []
+	tran_names_list.append("inv_nand"+str(nand_size)+"_" + circuit_name + "_1_nmos")
+	tran_names_list.append("inv_nand"+str(nand_size)+"_" + circuit_name + "_1_pmos")
+	tran_names_list.append("inv_" + circuit_name + "_2_nmos")
+	tran_names_list.append("inv_" + circuit_name + "_3_nmos")
+	tran_names_list.append("inv_" + circuit_name + "_4_nmos")
+	# Create a list of all wires used in this subcircuit
+
+	wire_names_list = [] 
+	return tran_names_list, wire_names_list
+
+
+# Added by Yuzong Chen (yc2367@cornell.edu)
+# This is the sense amp circuit for M4BRAM dummy array
 # We are not going to size this circuit. 
 def generate_samp_dummy_lp(spice_filename, circuit_name):
 
@@ -103,7 +139,7 @@ def generate_samp_dummy_lp(spice_filename, circuit_name):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the write driver for BRAM-CIM dummy array
+# This is the write driver for M4BRAM dummy array
 # The part which is commented out can be restored (you need to comment those below it) to enable sizing of this module
 # It is however expected that write driver not be in the critical path of SRAM-based BRAm and therefore sizing it will just increase COFEE's runtime.
 def generate_writedriver_dummy_lp(spice_filename, circuit_name):
@@ -148,7 +184,7 @@ def generate_writedriver_dummy_lp(spice_filename, circuit_name):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the full adder circuit for BRAM-CIM dummy array (not using low-power for good performance)
+# This is the full adder circuit for M4BRAM dummy array (not using low-power for good performance)
 # We are going to size only the carry propagation tgate of this circuit.
 # For other components, the pmos/nmos ratio is determined by the stardard cell pmos/nmos ratio in 28nm technology 
 # We are going to make one input of the adder always 0, as this makes it easier to measure the delay
@@ -197,7 +233,7 @@ def generate_fulladder_dummy(spice_filename, circuit_name, numberofsrams):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the 4-bit manchester carry chain for full adder in BRAM-CIM dummy array (not using low-power for good performance)
+# This is the 4-bit manchester carry chain for full adder in M4BRAM dummy array (not using low-power for good performance)
 # We are going to size only the carry propagation and buffer of this circuit.
 # For other components, the pmos/nmos ratio is determined by the stardard cell pmos/nmos ratio in 28nm technology 
 # Hence the adder is just propagating the Cin (1111 + 0001 + 0 = 1 0000)
@@ -392,7 +428,7 @@ def generate_manchester4_dummy(spice_filename, circuit_name, numberofsrams):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the 4-bit carry-lookahead adder in BRAM-CIM dummy array (not using low-power for good performance)
+# This is the 4-bit carry-lookahead adder in M4BRAM dummy array (not using low-power for good performance)
 # Hence the adder is just propagating the Cin (1111 + 0001 + 0 = 1 0000)
 def generate_lookahead4_dummy(spice_filename, circuit_name, numberofsrams):
 
@@ -580,7 +616,7 @@ def generate_lookahead4_dummy(spice_filename, circuit_name, numberofsrams):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the 2:1 mux circuit for BRAM-CIM dummy array. It consists of 2 transmission gates.
+# This is the 2:1 mux circuit for M4BRAM dummy array. It consists of 2 transmission gates.
 # We are going to disable 1 transmission gates for easier measurement of the delay.
 # The pmos/nmos ratio is determined by the stardard cell pmos/nmos ratio in 28nm technology 
 def generate_mux2_dummy_lp(spice_filename, circuit_name):
@@ -606,7 +642,7 @@ def generate_mux2_dummy_lp(spice_filename, circuit_name):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-# This is the 3:1 mux circuit for BRAM-CIM dummy array. It consists of 3 transmission gates.
+# This is the 3:1 mux circuit for M4BRAM dummy array. It consists of 3 transmission gates.
 # We are going to disable 2 transmission gates for easier measurement of the delay.
 # The pmos/nmos ratio is determined by the stardard cell pmos/nmos ratio in 28nm technology 
 def generate_mux3_dummy_lp(spice_filename, circuit_name):
@@ -622,6 +658,34 @@ def generate_mux3_dummy_lp(spice_filename, circuit_name):
 	spice_file.write("X_tgate_mux3_dummy_1   n_in   n_out  n_gate_nmos n_gate_pmos  n_vdd n_gnd tgate_lp Wn=45n Wp=90n\n")
 	spice_file.write("X_tgate_mux3_dummy_2   n_vdd  n_out  n_gnd       n_vdd        n_vdd n_gnd tgate_lp Wn=45n Wp=90n\n")
 	spice_file.write("X_tgate_mux3_dummy_3   n_vdd  n_out  n_gnd       n_vdd        n_vdd n_gnd tgate_lp Wn=45n Wp=90n\n")
+
+	spice_file.write(".ENDS\n\n\n")
+	spice_file.close()
+
+	tran_names_list = []
+	wire_names_list = []
+
+	return tran_names_list, wire_names_list
+
+
+# Added by Yuzong Chen (yc2367@cornell.edu)
+# This is the 4:1 mux circuit for M4BRAM's duplication shuffler. It consists of 4 transmission gates.
+# We are going to disable 3 transmission gates for easier measurement of the delay.
+# The pmos/nmos ratio is determined by the stardard cell pmos/nmos ratio in 28nm technology 
+def generate_mux4_dummy_lp(spice_filename, circuit_name):
+
+	# Open SPICE file for appending
+	spice_file = open(spice_filename, 'a')
+	# currently only works for 22nm
+	spice_file.write("******************************************************************************************\n")
+	spice_file.write("* " + circuit_name + " subcircuit dummy-array 4:1 mux \n")
+	spice_file.write("******************************************************************************************\n")
+	spice_file.write(".SUBCKT " + circuit_name + " n_in n_out n_gate_nmos n_gate_pmos n_vdd n_gnd\n")
+	# I am going to disable two transmission gates in this
+	spice_file.write("X_tgate_mux3_dummy_1   n_in   n_out  n_gate_nmos n_gate_pmos  n_vdd n_gnd tgate_lp Wn=45n Wp=90n\n")
+	spice_file.write("X_tgate_mux3_dummy_2   n_vdd  n_out  n_gnd       n_vdd        n_vdd n_gnd tgate_lp Wn=45n Wp=90n\n")
+	spice_file.write("X_tgate_mux3_dummy_3   n_vdd  n_out  n_gnd       n_vdd        n_vdd n_gnd tgate_lp Wn=45n Wp=90n\n")
+	spice_file.write("X_tgate_mux3_dummy_4   n_vdd  n_out  n_gnd       n_vdd        n_vdd n_gnd tgate_lp Wn=45n Wp=90n\n")
 
 	spice_file.write(".ENDS\n\n\n")
 	spice_file.close()

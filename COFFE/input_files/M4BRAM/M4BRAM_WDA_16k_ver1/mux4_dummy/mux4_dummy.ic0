@@ -1,0 +1,33 @@
+* "simulator" "PrimeSim HSPICE"
+* "version" "T-2022.06-SP1 linux64"
+* "format" "HSP"
+* "rundate" "20:37:32 06/30/2023 "
+* "netlist" "mux4_dummy.sp "
+* "runtitle" ".title m4bram duplication shuffler 4:1 mux"
+* time =    0.            
+* temperature =   25.0000        
+*** BEGIN: Saved Operating Point ***                     
+.option 
++ gmindc=   1.0000p       
+.nodeset
++ mux4_out =   1.6427p       
++ n_bl = 553.4673m       
++ n_br = 355.3539m       
++ op =   0.            
++ sel =   0.            
++ selbar = 949.9993m       
++ vclmpmtj = 653.0000m       
++ vdd = 800.0000m       
++ vdd_lp = 950.0000m       
++ vdd_mux4 = 950.0000m       
++ vrefmtj = 627.0000m       
++ vsram =   1.0000        
++ vsram_n =   0.            
++ xwrite.n_1_1 =  50.4548m       
++ xwrite.n_1_2 = 355.3538m       
++ xwrite.n_din1 = 513.7883n       
++ xwrite.n_dinb = 949.9979m       
++ xwrite.n_web = 949.9993m       
++ xwrite.p_1_1 = 553.4682m       
++ xwrite.p_1_2 = 892.6782m       
+***   END: Saved Operating Point ***                     

@@ -1,0 +1,63 @@
+* "simulator" "PrimeSim HSPICE"
+* "version" "T-2022.06-SP1 linux64"
+* "format" "HSP"
+* "rundate" "20:37:28 06/30/2023 "
+* "netlist" "precharge_dummy.sp "
+* "runtitle" ".title dummy array precharge and equalization"
+* time =    0.            
+* temperature =   25.0000        
+*** BEGIN: Saved Operating Point ***                     
+.option 
++ gmindc=   1.0000p       
+.nodeset
++ n_bl_0 =   1.0899p       
++ n_bl_1 = 400.1172p       
++ n_bl_2 = 789.9265p       
++ n_bl_3 =   1.1705n       
++ n_bl_4 =   1.5419n       
++ n_bl_5 =   1.9040n       
++ n_bl_6 =   2.2570n       
++ n_bl_7 =   2.6007n       
++ n_br_0 = 950.0000m       
++ n_br_1 = 950.0000m       
++ n_br_2 = 950.0000m       
++ n_br_3 = 950.0000m       
++ n_br_4 = 950.0000m       
++ n_br_5 = 950.0000m       
++ n_br_6 = 950.0000m       
++ n_br_7 = 950.0000m       
++ n_in =   0.            
++ n_invl_out = 949.9993m       
++ n_invr_out = 498.7750n       
++ tgate_l =   9.5002f       
++ tgate_r = 950.0000m       
++ v_precharge = 949.8881m       
++ vclmpmtj = 653.0000m       
++ vdd = 800.0000m       
++ vdd_eq = 950.0000m       
++ vdd_lp = 950.0000m       
++ vrefmtj = 627.0000m       
++ vsram =   1.0000        
++ vsram_n =   0.            
++ xsram1.n_1_1 = 370.7734m       
++ xsram1.n_1_2 = 370.7741m       
++ xsram2.n_1_1 = 370.7734m       
++ xsram2.n_1_2 = 370.7741m       
++ xsram3.n_1_1 = 370.7734m       
++ xsram3.n_1_2 = 370.7741m       
++ xsram4.n_1_1 = 370.7734m       
++ xsram4.n_1_2 = 370.7741m       
++ xsram5.n_1_1 = 370.7734m       
++ xsram5.n_1_2 = 370.7741m       
++ xsram6.n_1_1 = 370.7734m       
++ xsram6.n_1_2 = 370.7741m       
++ xsram7.n_1_1 = 370.7734m       
++ xsram7.n_1_2 = 370.7741m       
++ xwrite.n_1_1 =   1.2641n       
++ xwrite.n_1_2 = 714.4986m       
++ xwrite.n_din1 = 498.7820n       
++ xwrite.n_dinb = 949.9980m       
++ xwrite.n_web = 949.9993m       
++ xwrite.p_1_1 = 233.5902m       
++ xwrite.p_1_2 = 950.0000m       
+***   END: Saved Operating Point ***                     

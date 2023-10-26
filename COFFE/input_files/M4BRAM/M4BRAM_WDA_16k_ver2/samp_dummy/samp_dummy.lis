@@ -1,0 +1,120 @@
+ ****** PrimeSim HSPICE -- T-2022.06-SP1 linux64 (Aug 19 2022 7764626) ******
+  Copyright (c) 1986 - 2023 by Synopsys, Inc. All Rights Reserved.
+  This software and the associated documentation are proprietary
+  to Synopsys, Inc. This software may only be used in accordance
+  with the terms and conditions of a written license agreement with
+  Synopsys, Inc. All other use, reproduction, or distribution of
+  this software is strictly prohibited.
+  Input File: samp_dummy.sp                                                     
+  Command line options: /opt/synopsys/hspice/T-2022.06-SP1/hspice/linux64/hspice samp_dummy.sp
+  Start time: Sat Jul  1 10:45:05 2023
+ lic:  
+ lic: FLEXlm: SDK_12.11.1 
+ lic: USER:   yc2367               HOSTNAME: beluga 
+ lic: HOSTID: 54802750             PID:      8294 
+ lic: Using FLEXlm license file: 
+ lic: 27000@flex.ece.cornell.edu 
+ lic: Checkout 1 hspice 
+ lic: License/Maintenance for hspice will expire on 09-jan-2025/2022.06 
+ lic: 1(in_use)/50(total) FLOATING license(s) on SERVER 27000@flex.ece.cornell.edu 
+ lic:   
+  **info** (samp_dummy.sp:17) DC voltage reset to initial transient source value in source 0:vin. new dc=0.9500D+00
+  **warning** (samp_dummy.sp:17) pulse rise time is  < or = zero, reset to tstep
+  **warning** (samp_dummy.sp:17) pulse fall time is  < or = zero, reset to tstep
+  **warning** (samp_dummy.sp:18) pulse rise time is  < or = zero, reset to tstep
+  **warning** (samp_dummy.sp:18) pulse fall time is  < or = zero, reset to tstep
+  **warning** (samp_dummy.sp:65) pulse rise time is  < or = zero, reset to tstep
+  **warning** (samp_dummy.sp:65) pulse fall time is  < or = zero, reset to tstep
+  **warning** (nmos_lp:xsram2.m1 (../subcircuits.l:1057)) Warning:  Acde = 0.245565 may be too small in BSIM4 model with w=1.15e-07 l=2.2e-08.
+  
+
+  **warning** the following singular supplies were terminated to 1 meg resistor 
+          supply       node1            node2
+(samp_dummy.sp:17)vin                     0:n_in             defined in subckt 0                     0:0                defined in subckt 0               
+(../process_data.l:34)vclmomtjn               0:vclmpmtj         defined in subckt 0                     0:0                defined in subckt 0               
+(../process_data.l:29)vsupply                 0:vdd              defined in subckt 0                     0:0                defined in subckt 0               
+(../process_data.l:33)vrefmtjn                0:vrefmtj          defined in subckt 0                     0:0                defined in subckt 0               
+(../process_data.l:32)vsram                   0:vsram            defined in subckt 0                     0:0                defined in subckt 0               
+(../process_data.l:35)vsram_n                 0:vsram_n          defined in subckt 0                     0:0                defined in subckt 0               
+(samp_dummy.sp:18)viww                    0:wordline         defined in subckt 0                     0:0                defined in subckt 0               
+      
+ **info** set option symb=1 internally to help for convergence.
+ *****************************************************************
+ ******  option summary
+ ******
+ runlvl  = 3         bypass  = 2.0000    
+ **info** dc convergence successful at Newton-Raphson method 
+
+   *** data name = sweep_data , index =     1 ***
+
+ ******
+ .title dummy array sense amp
+
+ ****** transient analysis tnom=  25.000 temp=  25.000 ******
+ meas_total_tfall= 102.7031p  targ= 102.7347p   trig=  31.5789f
+ meas_total_trise= 102.7031p  targ= 102.7347p   trig=  31.5789f
+ meas_logic_low_voltage=   0.        
+ meas_current=  -2.1779f  from=   0.             to=   4.0000n
+ meas_avg_power= 517.2533n
+
+          ***** job concluded
+1****** PrimeSim HSPICE -- T-2022.06-SP1 linux64 (Aug 19 2022 7764626) ******
+ ******  
+ .title dummy array sense amp
+
+ ****** job statistics summary tnom=  25.000 temp=  25.000 ******
+  
+ ******  Machine Information  ******
+ CPU:
+ model name	: 12th Gen Intel(R) Core(TM) i9-12900KS
+ cpu MHz	: 5199.816
+ CPU(s)		: 24
+  
+ OS:
+ Linux version 3.10.0-1160.80.1.el7.x86_64 (mockbuild@kbuilder.bsys.centos.org) (gcc version 4.8.5 20150623 (Red Hat 4.8.5-44) (GCC) ) #1 SMP Tue Nov 8 15:48:59 UTC 2022
+
+ System loadavg : 1.26 1.15 1.10 2/1042 8298
+
+
+  ******  PrimeSim HSPICE Threads Information  ******
+
+  Command Line Threads Count :     1
+  Available CPU Count        :    24
+  Actual Threads Count       :     1
+
+
+  ******  Circuit Statistics  ******
+  # nodes       =     406 # elements   =     147
+  # resistors   =      21 # capacitors =      28 # inductors   =       0
+  # mutual_inds =       0 # vccs       =       0 # vcvs        =       0
+  # cccs        =       0 # ccvs       =       0 # volt_srcs   =       9
+  # curr_srcs   =       1 # diodes     =       0 # bjts        =       0
+  # jfets       =       0 # mosfets    =      88 # U elements  =       0
+  # T elements  =       0 # W elements =       0 # B elements  =       0
+  # S elements  =       0 # P elements =       0 # va device   =       0
+  # vector_srcs =       0 # N elements =       0
+
+
+  ******  Runtime Statistics (seconds)  ******
+
+  analysis           time    # points   tot. iter  conv.iter
+  op point           0.00           1          24
+  transient          0.02        4001         165          60 rev=         5
+  readin             0.01
+  errchk             0.00
+  setup              0.00
+  output             0.00
+
+
+           peak memory used        499.12 megabytes
+           total cpu time            0.05 seconds
+           total elapsed time        0.37 seconds
+           job started at     10:45:05 07/01/2023
+           job ended   at     10:45:06 07/01/2023
+
+>info:         ***** hspice job concluded
+           job total runtime         0.37 seconds
+
+
+ lic: Release hspice token(s) 
+ lic: total license checkout elapse time:        0.32(s)

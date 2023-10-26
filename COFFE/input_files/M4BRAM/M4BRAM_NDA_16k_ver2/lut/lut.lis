@@ -1,0 +1,159 @@
+ ****** PrimeSim HSPICE -- T-2022.06-SP1 linux64 (Aug 19 2022 7764626) ******
+  Copyright (c) 1986 - 2023 by Synopsys, Inc. All Rights Reserved.
+  This software and the associated documentation are proprietary
+  to Synopsys, Inc. This software may only be used in accordance
+  with the terms and conditions of a written license agreement with
+  Synopsys, Inc. All other use, reproduction, or distribution of
+  this software is strictly prohibited.
+  Input File: lut.sp                                                            
+  Command line options: /opt/synopsys/hspice/T-2022.06-SP1/hspice/linux64/hspice lut.sp
+  Start time: Sun Jul  2 03:11:35 2023
+ lic:  
+ lic: FLEXlm: SDK_12.11.1 
+ lic: USER:   yc2367               HOSTNAME: beluga 
+ lic: HOSTID: 54802750             PID:      12071 
+ lic: Using FLEXlm license file: 
+ lic: 27000@flex.ece.cornell.edu 
+ lic: Checkout 1 hspice 
+ lic: License/Maintenance for hspice will expire on 09-jan-2025/2022.06 
+ lic: 1(in_use)/50(total) FLOATING license(s) on SERVER 27000@flex.ece.cornell.edu 
+ lic:   
+  **info** (lut.sp:17) DC voltage reset to initial transient source value in source 0:vin. new dc=0.0000D+00
+  **warning** (lut.sp:17) pulse rise time is  < or = zero, reset to tstep
+  **warning** (lut.sp:17) pulse fall time is  < or = zero, reset to tstep
+  **warning** (nmos:xlut.xinv_lut_sram_driver_1.mndown (../basic_subcircuits.l:61)) Warning:  Acde = 0.245565 may be too small in BSIM4 model with w=4.5e-08 l=2.2e-08.
+             
+ Summary of Linear Res Distribution Info
+ ---------------------------------------
+ |Range          |Total     |Percent(%)|
+ |---------------+----------+----------|
+ |1e+00  ~  1e+03|37        |100.0000  |
+ ---------------------------------------
+              
+             
+ Summary of Linear Cap Distribution Info
+ ---------------------------------------
+ |Range          |Total     |Percent(%)|
+ |---------------+----------+----------|
+ |1e-17  ~  1e-16|62        |83.7838   |
+ |1e-16  ~  1e-15|12        |16.2162   |
+ ---------------------------------------
+              
+             
+ Summary of Detailed RC Type Statistics
+ -------------------------
+ |Element Type|Number    |
+ |------------+----------|
+ |Constant Res|37        |
+ |            |          |
+ |Constant Cap|74        |
+ -------------------------
+              
+  
+
+  **warning** the following singular supplies were terminated to 1 meg resistor 
+          supply       node1            node2
+(../process_data.l:34)vclmomtjn               0:vclmpmtj         defined in subckt 0                     0:0                defined in subckt 0               
+(../process_data.l:30)vsupplylp               0:vdd_lp           defined in subckt 0                     0:0                defined in subckt 0               
+(../process_data.l:33)vrefmtjn                0:vrefmtj          defined in subckt 0                     0:0                defined in subckt 0               
+      
+ **info** set option symb=1 internally to help for convergence.
+ *****************************************************************
+ ******  option summary
+ ******
+ runlvl  = 3         bypass  = 2.0000    
+ **info** dc convergence successful at Newton-Raphson method 
+
+   *** data name = sweep_data , index =     1 ***
+
+ ******
+ .title 6-lut
+
+ ****** transient analysis tnom=  25.000 temp=  25.000 ******
+ meas_inv_lut_0sram_driver_1_tfall=   3.9765p  targ=   4.4765p   trig= 500.0000f
+ meas_inv_lut_0sram_driver_1_trise=   4.0231p  targ=   2.0055n   trig=   2.0015n
+ meas_inv_lut_0sram_driver_2_tfall=   9.7648p  targ=   2.0113n   trig=   2.0015n
+ meas_inv_lut_0sram_driver_2_trise=  11.4960p  targ=  11.9960p   trig= 500.0000f
+ meas_inv_lut_int_buffer_1_tfall=  77.3428p  targ=  77.8428p   trig= 500.0000f
+ meas_inv_lut_int_buffer_1_trise=  69.4675p  targ=   2.0710n   trig=   2.0015n
+ meas_inv_lut_int_buffer_2_tfall=  81.9755p  targ=   2.0835n   trig=   2.0015n
+ meas_inv_lut_int_buffer_2_trise=  91.6687p  targ=  92.1687p   trig= 500.0000f
+ meas_inv_lut_out_buffer_1_tfall= 153.9562p  targ= 154.4562p   trig= 500.0000f
+ meas_inv_lut_out_buffer_1_trise= 148.0738p  targ=   2.1496n   trig=   2.0015n
+ meas_inv_lut_out_buffer_2_tfall= 164.9003p  targ=   2.1664n   trig=   2.0015n
+ meas_inv_lut_out_buffer_2_trise= 165.3100p  targ= 165.8100p   trig= 500.0000f
+ meas_total_tfall= 164.9003p  targ=   2.1664n   trig=   2.0015n
+ meas_total_trise= 165.3100p  targ= 165.8100p   trig= 500.0000f
+ meas_logic_low_voltage= 145.2253u
+ info_node1_lut_tfall=  13.1073p  targ=   2.0146n   trig=   2.0015n
+ info_node1_lut_trise=  54.9793p  targ=  55.4793p   trig= 500.0000f
+ info_node2_lut_tfall=  18.2654p  targ=   2.0198n   trig=   2.0015n
+ info_node2_lut_trise= 102.1119p  targ= 102.6119p   trig= 500.0000f
+ info_node3_lut_tfall=  81.9755p  targ=   2.0835n   trig=   2.0015n
+ info_node3_lut_trise=  91.6687p  targ=  92.1687p   trig= 500.0000f
+ info_node4_lut_tfall=  88.5212p  targ=   2.0900n   trig=   2.0015n
+ info_node4_lut_trise= 128.6770p  targ= 129.1770p   trig= 500.0000f
+ info_node5_lut_tfall=  97.9162p  targ=   2.0994n   trig=   2.0015n
+ info_node5_lut_trise= 190.1947p  targ= 190.6947p   trig= 500.0000f
+
+          ***** job concluded
+1****** PrimeSim HSPICE -- T-2022.06-SP1 linux64 (Aug 19 2022 7764626) ******
+ ******  
+ .title 6-lut
+
+ ****** job statistics summary tnom=  25.000 temp=  25.000 ******
+  
+ ******  Machine Information  ******
+ CPU:
+ model name	: 12th Gen Intel(R) Core(TM) i9-12900KS
+ cpu MHz	: 5199.816
+ CPU(s)		: 24
+  
+ OS:
+ Linux version 3.10.0-1160.80.1.el7.x86_64 (mockbuild@kbuilder.bsys.centos.org) (gcc version 4.8.5 20150623 (Red Hat 4.8.5-44) (GCC) ) #1 SMP Tue Nov 8 15:48:59 UTC 2022
+
+ System loadavg : 1.04 1.05 1.05 2/1042 12077
+
+
+  ******  PrimeSim HSPICE Threads Information  ******
+
+  Command Line Threads Count :     1
+  Available CPU Count        :    24
+  Actual Threads Count       :     1
+
+
+  ******  Circuit Statistics  ******
+  # nodes       =     353 # elements   =     191
+  # resistors   =      40 # capacitors =      74 # inductors   =       0
+  # mutual_inds =       0 # vccs       =       0 # vcvs        =       0
+  # cccs        =       0 # ccvs       =       0 # volt_srcs   =       7
+  # curr_srcs   =       0 # diodes     =       0 # bjts        =       0
+  # jfets       =       0 # mosfets    =      70 # U elements  =       0
+  # T elements  =       0 # W elements =       0 # B elements  =       0
+  # S elements  =       0 # P elements =       0 # va device   =       0
+  # vector_srcs =       0 # N elements =       0
+
+
+  ******  Runtime Statistics (seconds)  ******
+
+  analysis           time    # points   tot. iter  conv.iter
+  op point           0.00           1           7
+  transient          0.03        4001         324         116 rev=         1
+  readin             0.01
+  errchk             0.01
+  setup              0.00
+  output             0.00
+
+
+           peak memory used        499.41 megabytes
+           total cpu time            0.05 seconds
+           total elapsed time        0.34 seconds
+           job started at     03:11:35 07/02/2023
+           job ended   at     03:11:36 07/02/2023
+
+>info:         ***** hspice job concluded
+           job total runtime         0.34 seconds
+
+
+ lic: Release hspice token(s) 
+ lic: total license checkout elapse time:        0.29(s)

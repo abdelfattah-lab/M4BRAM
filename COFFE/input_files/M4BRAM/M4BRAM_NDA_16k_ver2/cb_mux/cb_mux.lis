@@ -1,0 +1,148 @@
+ ****** PrimeSim HSPICE -- T-2022.06-SP1 linux64 (Aug 19 2022 7764626) ******
+  Copyright (c) 1986 - 2023 by Synopsys, Inc. All Rights Reserved.
+  This software and the associated documentation are proprietary
+  to Synopsys, Inc. This software may only be used in accordance
+  with the terms and conditions of a written license agreement with
+  Synopsys, Inc. All other use, reproduction, or distribution of
+  this software is strictly prohibited.
+  Input File: cb_mux.sp                                                         
+  Command line options: /opt/synopsys/hspice/T-2022.06-SP1/hspice/linux64/hspice cb_mux.sp
+  Start time: Sun Jul  2 03:02:59 2023
+ lic:  
+ lic: FLEXlm: SDK_12.11.1 
+ lic: USER:   yc2367               HOSTNAME: beluga 
+ lic: HOSTID: 54802750             PID:      7181 
+ lic: Using FLEXlm license file: 
+ lic: 27000@flex.ece.cornell.edu 
+ lic: Checkout 1 hspice 
+ lic: License/Maintenance for hspice will expire on 09-jan-2025/2022.06 
+ lic: 1(in_use)/50(total) FLOATING license(s) on SERVER 27000@flex.ece.cornell.edu 
+ lic:   
+  **info** (cb_mux.sp:17) DC voltage reset to initial transient source value in source 0:vin. new dc=0.0000D+00
+  **warning** (cb_mux.sp:17) pulse rise time is  < or = zero, reset to tstep
+  **warning** (cb_mux.sp:17) pulse fall time is  < or = zero, reset to tstep
+  **warning** (nmos:xlut_a_driver_1.xinv_lut_a_driver_2.mndown (../basic_subcircuits.l:61)) Warning:  Acde = 0.245565 may be too small in BSIM4 model with w=5.4e-07 l=2.2e-08.
+             
+ Summary of Linear Res Distribution Info
+ ---------------------------------------
+ |Range          |Total     |Percent(%)|
+ |---------------+----------+----------|
+ |1e+00  ~  1e+03|111       |82.2222   |
+ |1e+03  ~  1e+05|24        |17.7778   |
+ ---------------------------------------
+              
+             
+ Summary of Linear Cap Distribution Info
+ ---------------------------------------
+ |Range          |Total     |Percent(%)|
+ |---------------+----------+----------|
+ |1e-17  ~  1e-16|198       |73.3333   |
+ |1e-16  ~  1e-15|8         |2.9630    |
+ |1e-15  ~  1e-14|64        |23.7037   |
+ ---------------------------------------
+              
+             
+ Summary of Detailed RC Type Statistics
+ -------------------------
+ |Element Type|Number    |
+ |------------+----------|
+ |Constant Res|135       |
+ |            |          |
+ |Constant Cap|270       |
+ -------------------------
+              
+  
+  **warning** No connections on node n_hang2; Node ignored.
+
+  **warning** the following singular supplies were terminated to 1 meg resistor 
+          supply       node1            node2
+(../process_data.l:34)vclmomtjn               0:vclmpmtj         defined in subckt 0                     0:0                defined in subckt 0               
+(../process_data.l:30)vsupplylp               0:vdd_lp           defined in subckt 0                     0:0                defined in subckt 0               
+(../process_data.l:33)vrefmtjn                0:vrefmtj          defined in subckt 0                     0:0                defined in subckt 0               
+(../process_data.l:35)vsram_n                 0:vsram_n          defined in subckt 0                     0:0                defined in subckt 0               
+      
+ *****************************************************************
+ ******  option summary
+ ******
+ runlvl  = 3         bypass  = 2.0000    
+ no convergence with standard algorithm,  trying damped pseudo-transient
+
+  *** pseudo tran succeeded *** 
+
+   *** data name = sweep_data , index =     1 ***
+
+ ******
+ .title connection block multiplexer
+
+ ****** transient analysis tnom=  25.000 temp=  25.000 ******
+ meas_inv_cb_mux_1_tfall=  77.2299p  targ= 266.5205p   trig= 189.2906p
+ meas_inv_cb_mux_1_trise=  99.8833p  targ=   2.2486n   trig=   2.1487n
+ meas_inv_cb_mux_2_tfall= 127.5699p  targ=   2.2763n   trig=   2.1487n
+ meas_inv_cb_mux_2_trise= 128.8946p  targ= 318.1852p   trig= 189.2906p
+ meas_total_tfall= 127.5699p  targ=   2.2763n   trig=   2.1487n
+ meas_total_trise= 128.8946p  targ= 318.1852p   trig= 189.2906p
+ meas_logic_low_voltage=  46.2168u
+ meas_current= -15.6638f  from=   0.             to=   4.0000n
+ meas_avg_power=   3.1328u
+
+          ***** job concluded
+1****** PrimeSim HSPICE -- T-2022.06-SP1 linux64 (Aug 19 2022 7764626) ******
+ ******  
+ .title connection block multiplexer
+
+ ****** job statistics summary tnom=  25.000 temp=  25.000 ******
+  
+ ******  Machine Information  ******
+ CPU:
+ model name	: 12th Gen Intel(R) Core(TM) i9-12900KS
+ cpu MHz	: 5198.986
+ CPU(s)		: 24
+  
+ OS:
+ Linux version 3.10.0-1160.80.1.el7.x86_64 (mockbuild@kbuilder.bsys.centos.org) (gcc version 4.8.5 20150623 (Red Hat 4.8.5-44) (GCC) ) #1 SMP Tue Nov 8 15:48:59 UTC 2022
+
+ System loadavg : 1.16 1.13 1.07 2/1042 7185
+
+
+  ******  PrimeSim HSPICE Threads Information  ******
+
+  Command Line Threads Count :     1
+  Available CPU Count        :    24
+  Actual Threads Count       :     1
+
+
+  ******  Circuit Statistics  ******
+  # nodes       =     746 # elements   =     565
+  # resistors   =     143 # capacitors =     270 # inductors   =       0
+  # mutual_inds =       0 # vccs       =       0 # vcvs        =       0
+  # cccs        =       0 # ccvs       =       0 # volt_srcs   =       8
+  # curr_srcs   =       0 # diodes     =       0 # bjts        =       0
+  # jfets       =       0 # mosfets    =     144 # U elements  =       0
+  # T elements  =       0 # W elements =       0 # B elements  =       0
+  # S elements  =       0 # P elements =       0 # va device   =       0
+  # vector_srcs =       0 # N elements =       0
+
+
+  ******  Runtime Statistics (seconds)  ******
+
+  analysis           time    # points   tot. iter  conv.iter
+  op point           0.12           1         459
+  transient          0.07        4001         339         124 rev=         2
+  readin             0.01
+  errchk             0.01
+  setup              0.00
+  output             0.00
+
+
+           peak memory used        500.92 megabytes
+           total cpu time            0.22 seconds
+           total elapsed time        0.50 seconds
+           job started at     03:02:59 07/02/2023
+           job ended   at     03:03:00 07/02/2023
+
+>info:         ***** hspice job concluded
+           job total runtime         0.50 seconds
+
+
+ lic: Release hspice token(s) 
+ lic: total license checkout elapse time:        0.28(s)

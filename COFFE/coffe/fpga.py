@@ -159,7 +159,8 @@ class _Specs:
 
         # Added by Yuzong Chen (yc2367@cornell.edu)
         self.enable_cim             = arch_params_dict['enable_cim']           # Whether enable computing in-memory or not
-        self.numberofrows_dummy     = arch_params_dict['numberofrows_dummy']   # number of srams rows in a dummy array
+        self.number_of_rows_dummy   = arch_params_dict['number_of_rows_dummy']   # number of srams rows in a dummy array
+        self.number_of_sub_dummy_arrays   = arch_params_dict['number_of_sub_dummy_arrays']   # number of sub dummy arrays
         
         
 class _SizableCircuit:
@@ -3541,18 +3542,18 @@ class _rowdecoder1(_SizableCircuit):
 class _wordlinedriver(_SizableCircuit):
     """ Wordline driver"""
     
-    def __init__(self, use_tgate, rowsram, number_of_banks, areafac, is_rowdecoder_2stage, memory_technology):
+    def __init__(self, use_tgate, sramcount, number_of_banks, areafac, is_rowdecoder_2stage, memory_technology):
         # Subcircuit name
         self.name = "wordline_driver"
         self.delay_weight = DELAY_WEIGHT_RAM
-        self.rowsram = rowsram
+        self.sramcount = sramcount
         self.memory_technology = memory_technology
         self.number_of_banks = number_of_banks
         self.areafac = areafac
         self.is_rowdecoder_2stage = is_rowdecoder_2stage
         self.wl_repeater = 0
-        if self.rowsram > 128:
-            self.rowsram /= 2
+        if self.sramcount > 128:
+            self.sramcount /= 2
             self.wl_repeater = 1
     
     def generate(self, subcircuit_filename, min_tran_width):
@@ -3590,9 +3591,9 @@ class _wordlinedriver(_SizableCircuit):
         print "Generating top-level evaluation path for the wordline driver"
         pass 
         if use_lp_transistor == 0:
-            self.top_spice_path = top_level.generate_wordline_driver_top(self.name, self.rowsram, self.number_of_banks + 1, self.is_rowdecoder_2stage, self.wl_repeater)
+            self.top_spice_path = top_level.generate_wordline_driver_top(self.name, self.sramcount, self.number_of_banks + 1, self.is_rowdecoder_2stage, self.wl_repeater)
         else:
-            self.top_spice_path = top_level.generate_wordline_driver_top_lp(self.name, self.rowsram, self.number_of_banks + 1, self.is_rowdecoder_2stage, self.wl_repeater)
+            self.top_spice_path = top_level.generate_wordline_driver_top_lp(self.name, self.sramcount, self.number_of_banks + 1, self.is_rowdecoder_2stage, self.wl_repeater)
 
     def update_area(self, area_dict, width_dict):
         """ Update area. To do this, we use area_dict which is a dictionary, maintained externally, that contains
@@ -3609,6 +3610,74 @@ class _wordlinedriver(_SizableCircuit):
         else:
             area+= area_dict["inv_nand3_" + self.name + "_1"]*3 + area_dict["inv_" + self.name + "_2"]
         area = area * self.areafac
+
+        area_with_sram = area
+        width = math.sqrt(area)
+        width_with_sram = math.sqrt(area_with_sram)
+        area_dict[self.name] = area
+        width_dict[self.name] = width
+        area_dict[self.name + "_sram"] = area_with_sram
+        width_dict[self.name + "_sram"] = width_with_sram
+
+    def update_wires(self, width_dict, wire_lengths, wire_layers):
+        """ Update wire lengths and wire layers based on the width of things, obtained from width_dict. """
+        
+        # Update wire lengths
+        wire_lengths["wire_" + self.name] = wire_lengths["wire_memorycell_horizontal"]
+
+        if self.memory_technology == "SRAM":
+            wire_layers["wire_" + self.name] = 2
+        else:
+            wire_layers["wire_" + self.name] = 3
+
+
+
+class _wordlinedriver_dummy(_SizableCircuit):
+    """ Wordline driver for dummy array"""
+    
+    def __init__(self, use_tgate, sramcount, number_of_banks, memory_technology):
+        # Subcircuit name
+        self.name = "wordline_driver_dummy"
+        self.delay_weight = DELAY_WEIGHT_RAM
+        self.sramcount = sramcount
+        self.number_of_banks = number_of_banks
+        self.memory_technology = memory_technology
+        self.nand_size = 2 
+    
+    def generate(self, subcircuit_filename, min_tran_width):
+        print "Generating the wordline driver for the dummy array" + self.name
+
+        self.transistor_names, self.wire_names = dummyarray_subcircuits.generate_wordline_driver_dummy_lp(subcircuit_filename, self.name, self.nand_size)
+
+        print self.transistor_names
+        # Initialize transistor sizes (to something more reasonable than all min size, but not necessarily a good choice, depends on architecture params)
+
+        self.initial_transistor_sizes["inv_nand" + str(self.nand_size) + "_" + self.name + "_1_nmos"] = 1 
+        self.initial_transistor_sizes["inv_nand" + str(self.nand_size) + "_" + self.name + "_1_pmos"] = 1
+        self.initial_transistor_sizes["inv_" + self.name + "_2_nmos"] = 1
+        self.initial_transistor_sizes["inv_" + self.name + "_2_pmos"] = 1        
+
+        self.initial_transistor_sizes["inv_" + self.name + "_3_nmos"] = 1
+        self.initial_transistor_sizes["inv_" + self.name + "_3_pmos"] = 1
+        self.initial_transistor_sizes["inv_" + self.name + "_4_nmos"] = 5
+        self.initial_transistor_sizes["inv_" + self.name + "_4_pmos"] = 5
+       # there is a wire in this cell, make sure to set its area to entire decoder
+
+        return self.initial_transistor_sizes
+
+    def generate_top(self):
+        print "Generating top-level evaluation path for the wordline driver in the dummy array"
+        self.top_spice_path = top_level.generate_wordline_driver_dummy_top_lp(self.name, self.sramcount*self.number_of_banks, self.nand_size)
+
+    def update_area(self, area_dict, width_dict):
+        """ Update area. To do this, we use area_dict which is a dictionary, maintained externally, that contains
+            the area of everything. It is expected that area_dict will have all the information we need to calculate area.
+            We update area_dict and width_dict with calculations performed in this function. """        
+        
+        # predecoder area
+        #nand should be different than inv change later 
+        area = area_dict["inv_" + self.name + "_3"] + area_dict["inv_" + self.name + "_4"]
+        area+= area_dict["inv_nand2_" + self.name + "_1"]*2 + area_dict["inv_" + self.name + "_2"]
 
         area_with_sram = area
         width = math.sqrt(area)
@@ -3851,13 +3920,13 @@ class _columndecoder(_SizableCircuit):
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
 class _writedriver_dummy(_SizableCircuit):
-    """ BRAM-CIM Dummy Array Write driver"""
+    """ M4BRAM Dummy Array Write driver"""
 
-    def __init__(self, use_tgate, numberofsramsincol, numberofrows_dummy):
+    def __init__(self, use_tgate, numberofsramsincol, number_of_rows_dummy):
         self.name = "writedriver_dummy"
         self.use_tgate = use_tgate
         self.numberofsramsincol = numberofsramsincol
-        self.numberofrows_dummy = numberofrows_dummy
+        self.number_of_rows_dummy = number_of_rows_dummy
 
     def generate(self, subcircuit_filename, min_tran_width):
         print "Generating write driver for the dummy array" 
@@ -3875,7 +3944,7 @@ class _writedriver_dummy(_SizableCircuit):
 
     def generate_top(self):
         print "Generating top-level evaluation for write driver in the dummy array"
-        self.top_spice_path = top_level.generate_writedriver_dummy_top_lp(self.name, self.numberofsramsincol, self.numberofrows_dummy)
+        self.top_spice_path = top_level.generate_writedriver_dummy_top_lp(self.name, self.numberofsramsincol, self.number_of_rows_dummy)
 
     def update_area(self, area_dict, width_dict):
         """ Update area. To do this, we use area_dict which is a dictionary, maintained externally, that contains
@@ -3943,13 +4012,13 @@ class _writedriver(_SizableCircuit):
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
 class _readcircuit_dummy(_SizableCircuit):
-    """ BRAM-CIM Dummy Array Read Circuit"""
+    """ M4BRAM Dummy Array Read Circuit"""
 
-    def __init__(self, use_tgate, numberofsramsincol, numberofrows_dummy):
+    def __init__(self, use_tgate, numberofsramsincol, number_of_rows_dummy):
         self.name = "readcircuit_dummy"
         self.use_tgate = use_tgate
         self.numberofsramsincol = numberofsramsincol
-        self.numberofrows_dummy = numberofrows_dummy
+        self.number_of_rows_dummy = number_of_rows_dummy
 
     def generate(self, subcircuit_filename, min_tran_width):
         print "Generating read circuit for the dummy array" 
@@ -3967,7 +4036,7 @@ class _readcircuit_dummy(_SizableCircuit):
 
     def generate_top(self):
         print "Generating top-level evaluation for read circuit in the dummy array"
-        self.top_spice_path = top_level.generate_readcircuit_dummy_top_lp(self.name, self.numberofsramsincol, self.numberofrows_dummy)
+        self.top_spice_path = top_level.generate_readcircuit_dummy_top_lp(self.name, self.numberofsramsincol, self.number_of_rows_dummy)
 
     def update_area(self, area_dict, width_dict):
         """ Update area. To do this, we use area_dict which is a dictionary, maintained externally, that contains
@@ -3986,13 +4055,13 @@ class _readcircuit_dummy(_SizableCircuit):
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
 class _samp_dummy(_SizableCircuit):
-    """ BRAM-CIM Dummy Array Sense Amp"""
+    """ M4BRAM Dummy Array Sense Amp"""
 
-    def __init__(self, use_tgate, numberofsramsincol, numberofrows_dummy, mode, difference):
+    def __init__(self, use_tgate, numberofsramsincol, number_of_rows_dummy, mode, difference):
         self.name = "samp_dummy"
         self.use_tgate = use_tgate
         self.numberofsramsincol = numberofsramsincol
-        self.numberofrows_dummy = numberofrows_dummy
+        self.number_of_rows_dummy = number_of_rows_dummy
         self.mode = mode
         self.difference = difference
 
@@ -4013,7 +4082,7 @@ class _samp_dummy(_SizableCircuit):
 
     def generate_top(self):
         print "Generating top-level evaluation for sense amp in the dummy array"
-        self.top_spice_path = top_level.generate_samp_dummy_top_part2_lp(self.name, self.numberofsramsincol, self.numberofrows_dummy, self.difference)
+        self.top_spice_path = top_level.generate_samp_dummy_top_part2_lp(self.name, self.numberofsramsincol, self.number_of_rows_dummy, self.difference)
 
     def update_area(self, area_dict, width_dict):
         """ Update area. To do this, we use area_dict which is a dictionary, maintained externally, that contains
@@ -4031,13 +4100,13 @@ class _samp_dummy(_SizableCircuit):
 
 
 class _fulladder_dummy(_SizableCircuit):
-    """ BRAM-CIM Dummy Array Full Adder"""
+    """ M4BRAM Dummy Array Full Adder"""
 
-    def __init__(self, use_tgate, numberofsramsinrow, numberofrows_dummy):
+    def __init__(self, use_tgate, numberofsramsinrow, number_of_rows_dummy):
         self.name = "fulladder_dummy"
         self.use_tgate = use_tgate
         self.numberofsramsinrow = numberofsramsinrow
-        self.numberofrows_dummy = numberofrows_dummy
+        self.number_of_rows_dummy = number_of_rows_dummy
 
     def generate(self, subcircuit_filename, min_tran_width):
         print "Generating full adder for the dummy array" 
@@ -4058,8 +4127,8 @@ class _fulladder_dummy(_SizableCircuit):
 
     def generate_top(self):
         print "Generating top-level evaluation for full adder in the dummy array"
-        #self.top_spice_path = top_level.generate_fulladder_dummy_top_lp(self.name, self.numberofsramsinrow, self.numberofrows_dummy)
-        self.top_spice_path = top_level.generate_fulladder_dummy_top(self.name, self.numberofsramsinrow, self.numberofrows_dummy)
+        #self.top_spice_path = top_level.generate_fulladder_dummy_top_lp(self.name, self.numberofsramsinrow, self.number_of_rows_dummy)
+        self.top_spice_path = top_level.generate_fulladder_dummy_top(self.name, self.numberofsramsinrow, self.number_of_rows_dummy)
 
     def update_area(self, area_dict, width_dict):
         """ Update area. To do this, we use area_dict which is a dictionary, maintained externally, that contains
@@ -4078,13 +4147,13 @@ class _fulladder_dummy(_SizableCircuit):
 
 
 class _manchester4_dummy(_SizableCircuit):
-    """ BRAM-CIM Dummy Array 4-bit Manchester Adder"""
+    """ M4BRAM Dummy Array 4-bit Manchester Adder"""
 
-    def __init__(self, use_tgate, numberofsramsinrow, numberofrows_dummy):
+    def __init__(self, use_tgate, numberofsramsinrow, number_of_rows_dummy):
         self.name = "manchester4_dummy"
         self.use_tgate = use_tgate
         self.numberofsramsinrow = numberofsramsinrow
-        self.numberofrows_dummy = numberofrows_dummy
+        self.number_of_rows_dummy = number_of_rows_dummy
 
     def generate(self, subcircuit_filename, min_tran_width):
         print "Generating 4-bit manchester adder for the dummy array" 
@@ -4106,7 +4175,7 @@ class _manchester4_dummy(_SizableCircuit):
 
     def generate_top(self):
         print "Generating top-level evaluation for 4-bit manchester adder in the dummy array"
-        self.top_spice_path = top_level.generate_manchester4_dummy_top(self.name, self.numberofsramsinrow, self.numberofrows_dummy)
+        self.top_spice_path = top_level.generate_manchester4_dummy_top(self.name, self.numberofsramsinrow, self.number_of_rows_dummy)
 
     def update_area(self, area_dict, width_dict):
         """ Update area. To do this, we use area_dict which is a dictionary, maintained externally, that contains
@@ -4127,13 +4196,13 @@ class _manchester4_dummy(_SizableCircuit):
 
 
 class _lookahead4_dummy(_SizableCircuit):
-    """ BRAM-CIM Dummy Array 4-bit Carry Lookahead Adder"""
+    """ M4BRAM Dummy Array 4-bit Carry Lookahead Adder"""
 
-    def __init__(self, use_tgate, numberofsramsinrow, numberofrows_dummy):
+    def __init__(self, use_tgate, numberofsramsinrow, number_of_rows_dummy):
         self.name = "lookahead4_dummy"
         self.use_tgate = use_tgate
         self.numberofsramsinrow = numberofsramsinrow
-        self.numberofrows_dummy = numberofrows_dummy
+        self.number_of_rows_dummy = number_of_rows_dummy
 
     def generate(self, subcircuit_filename, min_tran_width):
         print "Generating 4-bit carry lookahead adder for the dummy array" 
@@ -4157,7 +4226,7 @@ class _lookahead4_dummy(_SizableCircuit):
 
     def generate_top(self):
         print "Generating top-level evaluation for 4-bit carry lookahead adder in the dummy array"
-        self.top_spice_path = top_level.generate_lookahead4_dummy_top(self.name, self.numberofsramsinrow, self.numberofrows_dummy)
+        self.top_spice_path = top_level.generate_lookahead4_dummy_top(self.name, self.numberofsramsinrow, self.number_of_rows_dummy)
 
     def update_area(self, area_dict, width_dict):
         """ Update area. To do this, we use area_dict which is a dictionary, maintained externally, that contains
@@ -4178,14 +4247,48 @@ class _lookahead4_dummy(_SizableCircuit):
 
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
-class _mux3_dummy(_SizableCircuit):
-    """ BRAM-CIM Dummy Array 3:1 mux"""
+class _mux4_dummy(_SizableCircuit):
+    """ M4BRAM Duplication Shuffler 4:1 mux"""
 
-    def __init__(self, use_tgate, numberofsramsincol, numberofrows_dummy):
+    def __init__(self, use_tgate):
+        self.name = "mux4_dummy"
+        self.use_tgate = use_tgate
+
+    def generate(self, subcircuit_filename, min_tran_width):
+        print "Generating 4:1 mux for the dummy array" 
+        self.transistor_names, self.wire_names = dummyarray_subcircuits.generate_mux4_dummy_lp(subcircuit_filename, self.name)
+
+        self.initial_transistor_sizes["tgate_mux4_dummy_1_nmos"] = 1 
+        self.initial_transistor_sizes["tgate_mux4_dummy_1_pmos"] = 2
+
+        return self.initial_transistor_sizes
+
+    def generate_top(self):
+        print "Generating top-level evaluation for 4:1 mux in the dummy array"
+        self.top_spice_path = top_level.generate_mux4_dummy_top_lp(self.name)
+
+    def update_area(self, area_dict, width_dict):
+        """ Update area. To do this, we use area_dict which is a dictionary, maintained externally, that contains
+            the area of everything. It is expected that area_dict will have all the information we need to calculate area.
+            We update area_dict and width_dict with calculations performed in this function. """     
+
+        area = area_dict["tgate_mux4_dummy_1"]*4
+        area_with_sram = area
+        width = math.sqrt(area)
+        width_with_sram = math.sqrt(area_with_sram)
+        area_dict[self.name] = area
+        width_dict[self.name] = width
+        area_dict[self.name + "_sram"] = area_with_sram
+        width_dict[self.name + "_sram"] = width_with_sram
+
+
+# Added by Yuzong Chen (yc2367@cornell.edu)
+class _mux3_dummy(_SizableCircuit):
+    """ M4BRAM Dummy Array 3:1 mux"""
+
+    def __init__(self, use_tgate):
         self.name = "mux3_dummy"
         self.use_tgate = use_tgate
-        self.numberofsramsincol = numberofsramsincol
-        self.numberofrows_dummy = numberofrows_dummy
 
     def generate(self, subcircuit_filename, min_tran_width):
         print "Generating 3:1 mux for the dummy array" 
@@ -4198,7 +4301,7 @@ class _mux3_dummy(_SizableCircuit):
 
     def generate_top(self):
         print "Generating top-level evaluation for 3:1 mux in the dummy array"
-        self.top_spice_path = top_level.generate_mux3_dummy_top_lp(self.name, self.numberofsramsincol, self.numberofrows_dummy)
+        self.top_spice_path = top_level.generate_mux3_dummy_top_lp(self.name)
 
     def update_area(self, area_dict, width_dict):
         """ Update area. To do this, we use area_dict which is a dictionary, maintained externally, that contains
@@ -4217,13 +4320,11 @@ class _mux3_dummy(_SizableCircuit):
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
 class _mux2_dummy(_SizableCircuit):
-    """ BRAM-CIM Dummy Array 2:1 mux"""
+    """ M4BRAM Dummy Array 2:1 mux"""
 
-    def __init__(self, use_tgate, numberofsramsincol, numberofrows_dummy):
+    def __init__(self, use_tgate):
         self.name = "mux2_dummy"
         self.use_tgate = use_tgate
-        self.numberofsramsincol = numberofsramsincol
-        self.numberofrows_dummy = numberofrows_dummy
 
     def generate(self, subcircuit_filename, min_tran_width):
         print "Generating 2:1 mux for the dummy array" 
@@ -4236,7 +4337,7 @@ class _mux2_dummy(_SizableCircuit):
 
     def generate_top(self):
         print "Generating top-level evaluation for 2:1 mux in the dummy array"
-        self.top_spice_path = top_level.generate_mux2_dummy_top_lp(self.name, self.numberofsramsincol, self.numberofrows_dummy)
+        self.top_spice_path = top_level.generate_mux2_dummy_top_lp(self.name)
 
     def update_area(self, area_dict, width_dict):
         """ Update area. To do this, we use area_dict which is a dictionary, maintained externally, that contains
@@ -4372,13 +4473,13 @@ class _prechargeandeq(_SizableCircuit):
 
 # Added by Yuzong Chen (yc2367@cornell.edu)
 class _prechargeandeq_dummy(_SizableCircuit):
-    """ BRAM-CIM Dummy Array Precharge and Equalization Circuit"""
+    """ M4BRAM Dummy Array Precharge and Equalization Circuit"""
 
-    def __init__(self, use_tgate, numberofsramsincol, numberofrows_dummy):
+    def __init__(self, use_tgate, numberofsramsincol, number_of_rows_dummy):
         self.name = "precharge_dummy"
         self.use_tgate = use_tgate
         self.numberofsramsincol = numberofsramsincol
-        self.numberofrows_dummy = numberofrows_dummy
+        self.number_of_rows_dummy = number_of_rows_dummy
 
     def generate(self, subcircuit_filename, min_tran_width):
         print "Generating precharge and equalization circuit for the dummy array" 
@@ -4390,7 +4491,7 @@ class _prechargeandeq_dummy(_SizableCircuit):
 
     def generate_top(self):
         print "Generating top-level evaluation for precharge and equalization circuit in the dummy array"
-        self.top_spice_path = top_level.generate_precharge_dummy_top_lp(self.name, self.numberofsramsincol, self.numberofrows_dummy)
+        self.top_spice_path = top_level.generate_precharge_dummy_top_lp(self.name, self.numberofsramsincol, self.number_of_rows_dummy)
 
     def update_area(self, area_dict, width_dict):
         """ Update area. To do this, we use area_dict which is a dictionary, maintained externally, that contains
@@ -4990,15 +5091,17 @@ class _RAM(_CompoundCircuit):
             self.writedriver = _writedriver(self.use_tgate, 2**self.row_decoder_bits)
             # Added by Yuzong Chen (yc2367@cornell.edu)
             if self.cspecs.enable_cim == 1: 
-                self.precharge_dummy = _prechargeandeq_dummy(self.use_tgate, 2**self.row_decoder_bits, self.cspecs.numberofrows_dummy)
-                self.writedriver_dummy = _writedriver_dummy(self.use_tgate, 2**self.row_decoder_bits, self.cspecs.numberofrows_dummy)
-                #self.readcircuit_dummy = _readcircuit_dummy(self.use_tgate, 2**self.row_decoder_bits, self.cspecs.numberofrows_dummy)
-                self.samp_dummy = _samp_dummy(self.use_tgate, 2**self.row_decoder_bits, self.cspecs.numberofrows_dummy, 0, self.cspecs.sense_dv)
-                self.fulladder_dummy = _fulladder_dummy(self.use_tgate, 2**(self.col_decoder_bits + self.conf_decoder_bits), self.cspecs.numberofrows_dummy)
-                self.manchester4_dummy = _manchester4_dummy(self.use_tgate, 2**(self.col_decoder_bits + self.conf_decoder_bits), self.cspecs.numberofrows_dummy)
-                self.lookahead4_dummy = _lookahead4_dummy(self.use_tgate, 2**(self.col_decoder_bits + self.conf_decoder_bits), self.cspecs.numberofrows_dummy)
-                self.mux3_dummy = _mux3_dummy(self.use_tgate, 2**(self.col_decoder_bits + self.conf_decoder_bits), self.cspecs.numberofrows_dummy)
-                self.mux2_dummy = _mux2_dummy(self.use_tgate, 2**(self.col_decoder_bits + self.conf_decoder_bits), self.cspecs.numberofrows_dummy)
+                self.precharge_dummy = _prechargeandeq_dummy(self.use_tgate, 2**self.row_decoder_bits, self.cspecs.number_of_rows_dummy)
+                self.wordlinedriver_dummy = _wordlinedriver_dummy(self.use_tgate, 2**(self.col_decoder_bits + self.conf_decoder_bits) // self.cspecs.number_of_sub_dummy_arrays, self.number_of_banks, self.memory_technology)
+                self.writedriver_dummy = _writedriver_dummy(self.use_tgate, 2**self.row_decoder_bits, self.cspecs.number_of_rows_dummy)
+                #self.readcircuit_dummy = _readcircuit_dummy(self.use_tgate, 2**self.row_decoder_bits, self.cspecs.number_of_rows_dummy)
+                self.samp_dummy = _samp_dummy(self.use_tgate, 2**self.row_decoder_bits, self.cspecs.number_of_rows_dummy, 0, self.cspecs.sense_dv)
+                self.fulladder_dummy = _fulladder_dummy(self.use_tgate, 2**(self.col_decoder_bits + self.conf_decoder_bits), self.cspecs.number_of_rows_dummy)
+                self.manchester4_dummy = _manchester4_dummy(self.use_tgate, 2**(self.col_decoder_bits + self.conf_decoder_bits), self.cspecs.number_of_rows_dummy)
+                self.lookahead4_dummy = _lookahead4_dummy(self.use_tgate, 2**(self.col_decoder_bits + self.conf_decoder_bits), self.cspecs.number_of_rows_dummy)
+                self.mux4_dummy = _mux4_dummy(self.use_tgate)
+                self.mux3_dummy = _mux3_dummy(self.use_tgate)
+                self.mux2_dummy = _mux2_dummy(self.use_tgate)
         elif self.memory_technology == "MTJ":
             self.mtjbasics = _mtjbasiccircuits()
             self.bldischarging = _mtjbldischarging(2**self.row_decoder_bits)
@@ -5118,12 +5221,14 @@ class _RAM(_CompoundCircuit):
             # Added by Yuzong Chen (yc2367@cornell.edu)
             if self.cspecs.enable_cim == 1:
                 init_tran_sizes.update(self.precharge_dummy.generate(subcircuits_filename, min_tran_width))
+                init_tran_sizes.update(self.wordlinedriver_dummy.generate(subcircuits_filename, min_tran_width))
                 #init_tran_sizes.update(self.readcircuit_dummy.generate(subcircuits_filename, min_tran_width))
                 init_tran_sizes.update(self.samp_dummy.generate(subcircuits_filename, min_tran_width))
                 init_tran_sizes.update(self.writedriver_dummy.generate(subcircuits_filename, min_tran_width))
                 init_tran_sizes.update(self.fulladder_dummy.generate(subcircuits_filename, min_tran_width))
                 init_tran_sizes.update(self.manchester4_dummy.generate(subcircuits_filename, min_tran_width))
                 init_tran_sizes.update(self.lookahead4_dummy.generate(subcircuits_filename, min_tran_width))
+                init_tran_sizes.update(self.mux4_dummy.generate(subcircuits_filename, min_tran_width))                
                 init_tran_sizes.update(self.mux3_dummy.generate(subcircuits_filename, min_tran_width))                
                 init_tran_sizes.update(self.mux2_dummy.generate(subcircuits_filename, min_tran_width))                
         else:
@@ -5163,7 +5268,8 @@ class _RAM(_CompoundCircuit):
         process_data_file.write(".PARAM sram_n_v = " + str(self.cspecs.vsram_n) + "\n")
         process_data_file.write(".PARAM Rcurrent = " + str(self.cspecs.worst_read_current) + "\n")
         process_data_file.write(".PARAM supply_v_lp = " + str(self.cspecs.vdd_low_power) + "\n\n")
-        process_data_file.write(".PARAM numberofrows_dummy = " + str(self.cspecs.numberofrows_dummy) + "\n\n")
+        process_data_file.write(".PARAM number_of_rows_dummy = " + str(self.cspecs.number_of_rows_dummy) + "\n\n")
+        process_data_file.write(".PARAM number_of_rows_dummy = " + str(self.cspecs.number_of_sub_dummy_arrays) + "\n\n")
 
 
         if use_lp_transistor == 0 :
@@ -5243,12 +5349,14 @@ class _RAM(_CompoundCircuit):
             # Added by Yuzong Chen (yc2367@cornell.edu)
             if self.cspecs.enable_cim == 1:
                 self.precharge_dummy.generate_top()
+                self.wordlinedriver_dummy.generate_top()
                 #self.readcircuit_dummy.generate_top()
                 self.samp_dummy.generate_top()
                 self.writedriver_dummy.generate_top()
                 self.fulladder_dummy.generate_top()                
                 #self.manchester4_dummy.generate_top()                
                 self.lookahead4_dummy.generate_top()                
+                self.mux4_dummy.generate_top()                
                 self.mux3_dummy.generate_top()                
                 self.mux2_dummy.generate_top()                
         else:
@@ -5294,12 +5402,14 @@ class _RAM(_CompoundCircuit):
             # Added by Yuzong Chen (yc2367@cornell.edu)
             if self.cspecs.enable_cim == 1:
                 self.precharge_dummy.update_area(area_dict, width_dict)
+                self.wordlinedriver_dummy.update_area(area_dict, width_dict)
                 #self.readcircuit_dummy.update_area(area_dict, width_dict)
                 self.samp_dummy.update_area(area_dict, width_dict)
                 self.writedriver_dummy.update_area(area_dict, width_dict)
                 self.fulladder_dummy.update_area(area_dict, width_dict)
                 self.manchester4_dummy.update_area(area_dict, width_dict)
                 self.lookahead4_dummy.update_area(area_dict, width_dict)
+                self.mux4_dummy.update_area(area_dict, width_dict)
                 self.mux3_dummy.update_area(area_dict, width_dict)
                 self.mux2_dummy.update_area(area_dict, width_dict)
         else:
@@ -5327,6 +5437,8 @@ class _RAM(_CompoundCircuit):
         self.rowdecoder_stage0.update_wires(width_dict, wire_lengths, wire_layers)
         self.memorycells.update_wires(width_dict, wire_lengths, wire_layers)
         self.wordlinedriver.update_wires(width_dict, wire_lengths, wire_layers)
+        if self.cspecs.enable_cim == 1:
+            self.wordlinedriver_dummy.update_wires(width_dict, wire_lengths, wire_layers)
         self.configurabledecoderi.update_wires(width_dict, wire_lengths, wire_layers)
         self.pgateoutputcrossbar.update_wires(width_dict, wire_lengths, wire_layers)
         self.configurabledecoderiii.update_wires(width_dict, wire_lengths, wire_layers)
@@ -6227,58 +6339,69 @@ class FPGA:
             # Added by Yuzong CHen (yc2367@cornell.edu)
             # Area overhead of dummy array
             if (self.RAM.memory_technology == "SRAM") and (self.specs.enable_cim == 1):
-                self.area_dict['memorycell_dummy_total'] = self.area_dict["memorycell_total"] / (2**(self.RAM.row_decoder_bits)) / self.number_of_banks * self.specs.numberofrows_dummy
-                self.area_dict['memorycell_dummy_total'] = self.area_dict['memorycell_dummy_total']*2 # We have two dummy array in each BRAM bank
+                self.area_dict['memorycell_dummy_total'] = self.area_dict["memorycell_total"] / (2**(self.RAM.row_decoder_bits)) / self.number_of_banks * self.specs.number_of_rows_dummy
+                # We have NDA or WDA variant for M4BRAM. NDA is based on 1-bank main BRAM, while WDA is based on 2-bank main BRAM with 2x area. 
+                self.area_dict['memorycell_dummy_total'] = self.area_dict["memorycell_dummy_total"] * self.number_of_banks 
+                
+                self.area_dict["wordline_dummy_total"] = self.area_dict[self.RAM.wordlinedriver_dummy.name] 
+                self.area_dict["wordline_dummy_total"] = self.area_dict["wordline_dummy_total"] * self.specs.number_of_rows_dummy * self.specs.number_of_sub_dummy_arrays
+                self.area_dict['wordline_dummy_total'] = self.area_dict['wordline_dummy_total'] * 2 # We have two wordline drivers for two ports of the dummy array
 
-                self.area_dict['wordline_dummy_total'] = self.area_dict["wordline_total"] / (2**(self.RAM.row_decoder_bits)) / self.number_of_banks * self.specs.numberofrows_dummy
-                self.area_dict['wordline_dummy_total'] = self.area_dict['wordline_dummy_total']*2 # We have two dummy array in each BRAM bank
-
-                self.area_dict["precharge_dummy_total"] = self.area_dict[self.RAM.precharge_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits)) * self.number_of_banks
+                self.area_dict["precharge_dummy_total"] = self.area_dict[self.RAM.precharge_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits)) 
                 self.area_dict["precharge_dummy_total"] = self.area_dict["precharge_dummy_total"] * 2 # We have two precharge circuits for two sets of bitlines per column due to dual-port BRAM
-                self.area_dict["precharge_dummy_total"] = self.area_dict["precharge_dummy_total"] * 2 # We have two dummy array in each BRAM bank
-                
-                self.area_dict["writedriver_dummy_total"] = self.area_dict[self.RAM.writedriver_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits)) * self.number_of_banks
+                # We have NDA or WDA variant for M4BRAM. NDA is based on 1-bank main BRAM, while WDA is based on 2-bank main BRAM with 2x area. 
+                self.area_dict["precharge_dummy_total"] = self.area_dict["precharge_dummy_total"] * self.number_of_banks
+
+                self.area_dict["writedriver_dummy_total"] = self.area_dict[self.RAM.writedriver_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits))
                 self.area_dict["writedriver_dummy_total"] = self.area_dict["writedriver_dummy_total"] * 2 # We have two writedrivers for two sets of bitlines per column due to dual-port BRAM
-                self.area_dict["writedriver_dummy_total"] = self.area_dict["writedriver_dummy_total"] * 2 # We have two dummy array in each BRAM bank
-                
+                # We have NDA or WDA variant for M4BRAM. NDA is based on 1-bank main BRAM, while WDA is based on 2-bank main BRAM with 2x area. 
+                self.area_dict["writedriver_dummy_total"] = self.area_dict["writedriver_dummy_total"] * self.number_of_banks 
+
                 #self.area_dict["readcircuit_dummy_total"] = self.area_dict[self.RAM.readcircuit_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits)) * self.number_of_banks
                 #self.area_dict["readcircuit_dummy_total"] = self.area_dict["readcircuit_dummy_total"] * 2 # We have two read circuits for two sets of bitlines per column due to dual-port BRAM
                 #self.area_dict["readcircuit_dummy_total"] = self.area_dict["readcircuit_dummy_total"] * 2 # We have two dummy array in each BRAM bank
                 
-                self.area_dict["samp_dummy_total"] = self.area_dict[self.RAM.samp_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits)) * self.number_of_banks
+                self.area_dict["samp_dummy_total"] = self.area_dict[self.RAM.samp_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits)) 
                 self.area_dict["samp_dummy_total"] = self.area_dict["samp_dummy_total"] * 2 # We have two samps for two sets of bitlines per column due to dual-port BRAM
-                self.area_dict["samp_dummy_total"] = self.area_dict["samp_dummy_total"] * 2 # We have two dummy array in each BRAM bank
-                
-                self.area_dict["fulladder_dummy_total"] = self.area_dict[self.RAM.fulladder_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits)) * self.number_of_banks
+                # We have NDA or WDA variant for M4BRAM. NDA is based on 1-bank main BRAM, while WDA is based on 2-bank main BRAM with 2x area. 
+                self.area_dict["samp_dummy_total"] = self.area_dict["samp_dummy_total"] * self.number_of_banks 
+  
+                self.area_dict["fulladder_dummy_total"] = self.area_dict[self.RAM.fulladder_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits)) 
                 self.area_dict["fulladder_dummy_total"] = self.area_dict["fulladder_dummy_total"] * 2 # We have two dummy array in each BRAM bank
                 
-                self.area_dict["manchester4_dummy_total"] = self.area_dict[self.RAM.manchester4_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits)) * self.number_of_banks
+                self.area_dict["manchester4_dummy_total"] = self.area_dict[self.RAM.manchester4_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits))
                 self.area_dict["manchester4_dummy_total"] = self.area_dict["manchester4_dummy_total"] / 4 # We have 4-bit manchester carry chain
                 self.area_dict["manchester4_dummy_total"] = self.area_dict["manchester4_dummy_total"] * 2 # We have two dummy array in each BRAM bank
                 #print "\n\nManchester Adder area: " + str(self.area_dict["manchester4_dummy_total"]/1000000) + "um2\n"
                 #print "Full Adder area: " + str(self.area_dict["fulladder_dummy_total"]/1000000) + "um2\n"
                 #print "RAM SB area: " + str(self.area_dict["RAM_SB"]/1000000) + "um2\n"
 
-                self.area_dict["lookahead4_dummy_total"] = self.area_dict[self.RAM.lookahead4_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits)) * self.number_of_banks
+                self.area_dict["lookahead4_dummy_total"] = self.area_dict[self.RAM.lookahead4_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits))
                 self.area_dict["lookahead4_dummy_total"] = self.area_dict["lookahead4_dummy_total"] / 4 # We have 4-bit carry lookahead adder 
-                self.area_dict["lookahead4_dummy_total"] = self.area_dict["lookahead4_dummy_total"] * 2 # We have two dummy array in each BRAM bank
-                #print "Full Adder area: " + str(self.area_dict["fulladder_dummy_total"]/1000000) + "um2\n\n"
-                #print "Manchester Adder area: " + str(self.area_dict["manchester4_dummy_total"]/1000000) + "um2\n\n"
-                #print "Carry Lookahead Adder area: " + str(self.area_dict["lookahead4_dummy_total"]/1000000) + "um2\n\n"
+                # We have NDA or WDA variant for M4BRAM. NDA is based on 1-bank main BRAM, while WDA is based on 2-bank main BRAM with 2x area. 
+                self.area_dict["lookahead4_dummy_total"] = self.area_dict["lookahead4_dummy_total"] * self.number_of_banks  # We have two dummy array in each BRAM bank
 
-                self.area_dict["mux3_dummy_total"] = self.area_dict[self.RAM.mux3_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits)) * self.number_of_banks
+                # The # of 4:1 mux is equal to the main BRAM's maximum output data width, but we multiply its area with # of BRAM columns due to the pitch-match consideration
+                self.area_dict["mux4_dummy_total"] = self.area_dict[self.RAM.mux4_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits))
+                # We have NDA or WDA variant for M4BRAM. NDA is based on 1-bank main BRAM, while WDA is based on 2-bank main BRAM with 2x area. 
+                self.area_dict["mux4_dummy_total"] = self.area_dict["mux4_dummy_total"] * self.number_of_banks
+                
+                self.area_dict["mux3_dummy_total"] = self.area_dict[self.RAM.mux3_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits))
                 # Assume that the muxing logic has 1 mux3 in each dummy array column, which is actually pessimistic since we only need 30 mux3 in the muxing logic per dummy array
                 # This pessimistic area overhead for mux3 is used to approximate the row decoder area overhead of the dummy array. We have 2 3:8 decoders and 1 2:4 decoder in each dummy array
                 self.area_dict["mux3_dummy_total"] = self.area_dict["mux3_dummy_total"] * 2 
-                self.area_dict["mux3_dummy_total"] = self.area_dict["mux3_dummy_total"] * 2 # We have two dummy array in each BRAM bank
+                # We have NDA or WDA variant for M4BRAM. NDA is based on 1-bank main BRAM, while WDA is based on 2-bank main BRAM with 2x area. 
+                self.area_dict["mux3_dummy_total"] = self.area_dict["mux3_dummy_total"] * self.number_of_banks
                 
-                self.area_dict["mux2_dummy_total"] = self.area_dict[self.RAM.mux2_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits)) * self.number_of_banks
-                self.area_dict["mux2_dummy_total"] = self.area_dict["mux2_dummy_total"] * 2 # We have two dummy array in each BRAM bank
+                self.area_dict["mux2_dummy_total"] = self.area_dict[self.RAM.mux2_dummy.name] * (2**(self.RAM.conf_decoder_bits+self.RAM.col_decoder_bits))
+                self.area_dict["mux2_dummy_total"] = self.area_dict["mux2_dummy_total"] * 2 # We have two write-back mux for two ports, respectively
+                # We have NDA or WDA variant for M4BRAM. NDA is based on 1-bank main BRAM, while WDA is based on 2-bank main BRAM with 2x area. 
+                self.area_dict["mux2_dummy_total"] = self.area_dict["mux2_dummy_total"] * self.number_of_banks 
                 
                 RAM_dummy_area = (self.area_dict['memorycell_dummy_total'] + self.area_dict['wordline_dummy_total'] +
                                     self.area_dict["precharge_dummy_total"] + self.area_dict["writedriver_dummy_total"] + 
                                     self.area_dict["samp_dummy_total"] + self.area_dict["lookahead4_dummy_total"] +
-                                    self.area_dict["mux3_dummy_total"] + self.area_dict["mux2_dummy_total"])
+                                    self.area_dict["mux4_dummy_total"] + self.area_dict["mux3_dummy_total"] + self.area_dict["mux2_dummy_total"])
                 RAM_area += RAM_dummy_area
                 self.area_dict["areaoverhead_dummy_total"] = RAM_dummy_area
 
@@ -6484,7 +6607,7 @@ class FPGA:
             self.update_wire_rc()
             #self.update_delays(self.spice_interface)
             old_cost = tran_sizing.cost_function(tran_sizing.get_eval_area(self, "global", self.sb_mux, 0, 0), tran_sizing.get_current_delay(self, 0), self.area_opt_weight, self.delay_opt_weight)
-            for i in range(-10, 11):
+            for i in range(1):
                 self.lb_height = old_height + ((0.01 * (i))* old_height)
                 self.update_area()
                 self.update_wires()
@@ -7218,6 +7341,23 @@ class FPGA:
                 self.delay_dict[self.RAM.precharge_dummy.name] = self.RAM.precharge_dummy.delay
                 self.RAM.precharge_dummy.power = float(spice_meas["meas_avg_power"][0])
 
+                print "  Updating delay for " + self.RAM.wordlinedriver_dummy.name
+                spice_meas = spice_interface.run(self.RAM.wordlinedriver_dummy.top_spice_path, parameter_dict) 
+                if spice_meas["meas_total_tfall"][0] == "failed" or spice_meas["meas_total_trise"][0] == "failed" :
+                    valid_delay = False
+                    tfall = 1
+                    trise = 1
+                else :  
+                    tfall = float(spice_meas["meas_total_tfall"][0])
+                    trise = float(spice_meas["meas_total_trise"][0])
+                if tfall < 0 or trise < 0 :
+                    valid_delay = False
+                self.RAM.wordlinedriver_dummy.tfall = tfall
+                self.RAM.wordlinedriver_dummy.trise = trise
+                self.RAM.wordlinedriver_dummy.delay = max(tfall, trise)
+                self.delay_dict[self.RAM.wordlinedriver_dummy.name] = self.RAM.wordlinedriver_dummy.delay
+                self.RAM.wordlinedriver_dummy.power = float(spice_meas["meas_avg_power"][0])
+
                 print "  Updating delay for " + self.RAM.writedriver_dummy.name
                 spice_meas = spice_interface.run(self.RAM.writedriver_dummy.top_spice_path, parameter_dict) 
                 if spice_meas["meas_total_tfall"][0] == "failed" or spice_meas["meas_total_trise"][0] == "failed" :
@@ -7246,12 +7386,14 @@ class FPGA:
                     trise = float(spice_meas["meas_total_trise"][0])
                 if tfall < 0 or trise < 0 :
                     valid_delay = False
-                self.RAM.samp_dummy.tfall = tfall
-                self.RAM.samp_dummy.trise = trise
-                self.RAM.samp_dummy.delay = max(tfall, trise)
+                self.RAM.samp_dummy.tfall = tfall + self.RAM.samp.tfall - self.RAM.samp_part2.tfall
+                self.RAM.samp_dummy.trise = trise + self.RAM.samp.trise - self.RAM.samp_part2.trise
+                self.RAM.samp_dummy.delay = max(tfall + self.RAM.samp.tfall - self.RAM.samp_part2.tfall, trise + self.RAM.samp.trise - self.RAM.samp_part2.trise)
                 self.delay_dict[self.RAM.samp_dummy.name] = self.RAM.samp_dummy.delay
                 self.RAM.samp_dummy.power = float(spice_meas["meas_avg_power"][0])
 
+                '''
+                
                 print "  Updating delay for " + self.RAM.fulladder_dummy.name
                 spice_meas = spice_interface.run(self.RAM.fulladder_dummy.top_spice_path, parameter_dict) 
                 if spice_meas["meas_total_tfall"][0] == "failed" or spice_meas["meas_total_trise"][0] == "failed" :
@@ -7286,6 +7428,8 @@ class FPGA:
                 self.delay_dict[self.RAM.manchester4_dummy.name] = self.RAM.manchester4_dummy.delay
                 self.RAM.manchester4_dummy.power = float(spice_meas["meas_avg_power"][0])
 
+                '''
+
                 print "  Updating delay for " + self.RAM.lookahead4_dummy.name
                 spice_meas = spice_interface.run(self.RAM.lookahead4_dummy.top_spice_path, parameter_dict) 
                 if spice_meas["meas_total_tfall"][0] == "failed" or spice_meas["meas_total_trise"][0] == "failed" :
@@ -7302,6 +7446,23 @@ class FPGA:
                 self.RAM.lookahead4_dummy.delay = max(tfall, trise)
                 self.delay_dict[self.RAM.lookahead4_dummy.name] = self.RAM.lookahead4_dummy.delay
                 self.RAM.lookahead4_dummy.power = float(spice_meas["meas_avg_power"][0])
+
+                print "  Updating delay for " + self.RAM.mux4_dummy.name
+                spice_meas = spice_interface.run(self.RAM.mux4_dummy.top_spice_path, parameter_dict) 
+                if spice_meas["meas_total_tfall"][0] == "failed" or spice_meas["meas_total_trise"][0] == "failed" :
+                    valid_delay = False
+                    tfall = 1
+                    trise = 1
+                else :  
+                    tfall = float(spice_meas["meas_total_tfall"][0])
+                    trise = float(spice_meas["meas_total_trise"][0])
+                if tfall < 0 or trise < 0 :
+                    valid_delay = False
+                self.RAM.mux4_dummy.tfall = tfall
+                self.RAM.mux4_dummy.trise = trise
+                self.RAM.mux4_dummy.delay = max(tfall, trise)
+                self.delay_dict[self.RAM.mux4_dummy.name] = self.RAM.mux4_dummy.delay
+                self.RAM.mux4_dummy.power = float(spice_meas["meas_avg_power"][0])
 
                 print "  Updating delay for " + self.RAM.mux3_dummy.name
                 spice_meas = spice_interface.run(self.RAM.mux3_dummy.top_spice_path, parameter_dict) 
