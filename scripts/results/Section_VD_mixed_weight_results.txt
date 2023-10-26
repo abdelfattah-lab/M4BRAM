@@ -1,6 +1,0 @@
-Mixed Weight Results
-
-Network   M4BRAM_Config  Weight                   Input   Speedup   
-resnet34  SY-M4L         0.95 4-bit, 0.05 8-bit   6-bit   2.33      
-resnet34  SY-M4L         0.85 4-bit, 0.15 8-bit   6-bit   2.02      
-resnet34  SY-M4L         0.75 4-bit, 0.25 8-bit   6-bit   2.02      
