@@ -151,6 +151,6 @@ f.legend([(f1,f2), (f3,f4), (f5,f6), (f8)],
 plt.subplots_adjust(wspace=0.38, hspace=0)
 
 current_path = os.getcwd()
-file_path = current_path + '/../' + 'results/fig_9_m4bram_mixed_activation.svg'
+file_path = current_path + '/../results/fig_9_m4bram_mixed_activation.svg'
 f.savefig(file_path, transparent=True, bbox_inches = 'tight', format='svg', dpi=200, pad_inches=0.1)
 

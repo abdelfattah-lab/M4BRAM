@@ -3,7 +3,7 @@ import os, subprocess
 
 def main():
     current_path = os.getcwd()
-    file_path = current_path + '/../' + 'results/m4bram_vs_bramac_ablation_results.txt'
+    file_path = current_path + '/../results/Section_VE_m4bram_vs_bramac_ablation_results.txt'
     network_list = ['alexnet', 'resnet34', 'vitbase']
     m4bram       = [('S', 'd')]
 

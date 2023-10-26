@@ -3,7 +3,7 @@ import os, subprocess
 
 def main():
     current_path = os.getcwd()
-    file_path = current_path + '/../' + 'results/no_dsp_results.txt'
+    file_path = current_path + '/../results/Section_VF_no_dsp_results.txt'
     with open(file_path, 'w') as f:
         f.write('No DSP Results\n\n')
         f.write('M4BRAM_Config'.ljust(15) + 'Weight'.ljust(8) + 'Input'.ljust(8) + 'Network'.ljust(10) + 'Speedup'.ljust(10) + '\n')

@@ -3,7 +3,7 @@ import os, subprocess
 
 def main():
     current_path = os.getcwd()
-    file_path = current_path + '/' + '../results/mixed_weight_results.txt'
+    file_path = current_path + '/../results/Section_VD_mixed_weight_results.txt'
     with open(file_path, 'w') as f:
         f.write('Mixed Weight Results\n\n')
         f.write('Network'.ljust(10) + 'M4BRAM_Config'.ljust(15) + 'Weight'.ljust(25) + 'Input'.ljust(8) + 'Speedup'.ljust(10) + '\n')

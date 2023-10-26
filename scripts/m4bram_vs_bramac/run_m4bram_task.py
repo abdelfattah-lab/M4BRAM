@@ -3,7 +3,7 @@ import os, subprocess
 
 def main():
     current_path = os.getcwd()
-    file_path = current_path + '/../' + 'results/m4bram_vs_bramac_results.txt'
+    file_path = current_path + '/../results/Section_VE_m4bram_vs_bramac_results.txt'
     with open(file_path, 'a') as f:
         f.write('\n\n\n')
         f.write('Network'.ljust(12) + 'M4BRAM_Config'.ljust(15) + 'Precision'.ljust(12) + 'Speedup'.ljust(10) + '\n')

@@ -131,6 +131,6 @@ f.legend([(f1,f2), (f3,f4), (f5,f6), ],
 plt.subplots_adjust(wspace=0.26, hspace=0)
 
 current_path = os.getcwd()
-file_path = current_path + '/../' + 'results/fig_12_m4bram_vs_dsp.svg'
+file_path = current_path + '/../results/fig_12_no_dsp.svg'
 f.savefig(file_path, transparent=True, bbox_inches = 'tight', format='svg', dpi=200, pad_inches=0.1)
 

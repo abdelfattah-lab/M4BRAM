@@ -136,6 +136,6 @@ f.subplots_adjust(
 
 
 current_path = os.getcwd()
-file_path = current_path + '/../' + 'results/fig10_m4bram_vs_bramac.svg'
+file_path = current_path + '/../results/fig_10_m4bram_vs_bramac.svg'
 f.savefig(file_path, transparent=True, bbox_inches = 'tight', format='svg', dpi=200, pad_inches=0.1)
 
