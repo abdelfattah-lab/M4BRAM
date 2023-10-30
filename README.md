@@ -56,7 +56,11 @@ We also provide the scripts to reproduce the figures in the M4BRAM paper. Run th
 Then 4 figures in _.svg_ format will be generated under the "**results**" directory. The 4 figures' names contain the corresponding figure numbers in the M4BRAM paper.
 
 
-## 2. Running the "**COFFE**" simulator for M4BRAM
+## 2. Running the "**dnn-compression**" experiments
+Please go to the "**dnn-compression**" folder and follow the instructions to run the experiments.
+
+
+## 3. Running the "**COFFE**" simulator for M4BRAM
 Before running this experiment, please source the necessary bash files in your terminal to enable Synopsys HSpice. Make sure that the following command:
  ```
 hspice
@@ -77,3 +81,5 @@ The two python2 commands evaluate M4BRAM-S and M4BRAM-L, respectively. Each of t
  open report.txt 
  ```
 The first _report.txt_ file shows the COFFE results for M4BRAM-S, while the second _report.txt_ shows the COFFE results for M4BRAM-L. The area and delay information of M4BRAM is inside the _report.txt_ file, under **DUMMY ARRAY AREA CONTRIBUTIONS**. 
+
+
