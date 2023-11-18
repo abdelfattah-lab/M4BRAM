@@ -6,11 +6,10 @@ can be used with standard CNN, MLP, and transformer models.
 
 ## Setup & Installation
 
-First, clone the project from GitHub:
+First, go to the M4BRAM project and cd to "**dnn-compression**":
 
 ```bash
-git clone https://github.com/abdelfattah/compression.git
-cd compression
+cd dnn-compression
 ```
 
 You can create a conda environment and install the dependencies using the \`environment.yml\` file:
@@ -22,7 +21,7 @@ conda env create -f environment.yml
 Then, activate the environment:
 
 ```bash
-conda activate compression
+conda activate dnn-compression
 ```
 
 ## Usage Examples
