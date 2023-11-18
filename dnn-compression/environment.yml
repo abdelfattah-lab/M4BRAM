@@ -1,4 +1,4 @@
-name: compression
+name: dnn-compression
 channels:
   - defaults
   - conda-forge
